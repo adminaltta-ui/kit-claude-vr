@@ -73,6 +73,8 @@ Pedidos para o João/
 - **Kie** (imagem e vídeo mais barato, pago por crédito): ela cria a conta em kie.ai e a chave de API.
   Guarde a chave no `~/.zshrc` como `KIE_API_KEY` (⛔ nunca num arquivo da pasta). Teste com a skill
   `kie-models`, listando os modelos de imagem.
+- **GitHub:** ela já tem conta. Instale o GitHub CLI (`gh`) e ajude a entrar pelo navegador
+  (`gh auth login`), para ela guardar os projetos dela e publicar páginas.
 - **Vercel:** ela já tem conta. Ligue quando for publicar a primeira página.
 
 ## 6. Trazer o que o ChatGPT já sabe dela

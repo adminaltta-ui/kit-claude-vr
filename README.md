@@ -33,6 +33,5 @@ as skills, a biblioteca de marketing e vendas, e o contexto da VR Concept.
 
 ## Regras deste repositório
 
-- É **privado**. ⛔ Não compartilhe o link com ninguém de fora.
 - ⛔ Sem senha, sem chave e sem dado de paciente aqui dentro.
 - Os PDFs dos livros não estão aqui (direito autoral). Os resumos, sim.
