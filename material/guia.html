@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kit Claude da Gabriela</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: uma coluna de leitura no meio, barra de seções fixa no alto, cartões só onde há ação (prompt, checklist, status). */
+:root{
+  --bg:#F4F3EF; --surface:#FFFFFF; --sunk:#ECEAE3; --line:#DEDAD0;
+  --fg:#252525; --muted:#6A655B; --gold:#8E6A1E; --gold-fill:#E7B84E; --gold-soft:#F3E6C4;
+  --ok:#2F6B47; --ok-soft:#E1EEE5; --wait:#8E6A1E; --wait-soft:#F3E9CF; --you:#36557A; --you-soft:#E2E9F2;
+  --display:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --text:"DM Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono:"DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1C1C1C; --surface:#252525; --sunk:#202020; --line:#383632;
+  --fg:#EEEAE2; --muted:#A39E93; --gold:#E7B84E; --gold-fill:#E7B84E; --gold-soft:#3A3222;
+  --ok:#86C29C; --ok-soft:#21342A; --wait:#E7B84E; --wait-soft:#3A3222; --you:#9DB8DA; --you-soft:#24303F;
+  color-scheme:dark; }}
+:root[data-theme="dark"]{
+  --bg:#1C1C1C; --surface:#252525; --sunk:#202020; --line:#383632;
+  --fg:#EEEAE2; --muted:#A39E93; --gold:#E7B84E; --gold-fill:#E7B84E; --gold-soft:#3A3222;
+  --ok:#86C29C; --ok-soft:#21342A; --wait:#E7B84E; --wait-soft:#3A3222; --you:#9DB8DA; --you-soft:#24303F;
+  color-scheme:dark; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:72px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+body{background:var(--bg); color:var(--fg); font-family:var(--text); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--bg)}
+a{color:var(--gold); text-underline-offset:3px}
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible{outline:2px solid var(--gold-fill); outline-offset:2px; border-radius:4px}
+
+.bar{position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.bar-in{max-width:1040px; margin:0 auto; display:flex; align-items:center; gap:20px; padding-block:10px; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+.brand{font-family:var(--display); font-weight:600; font-size:19px; white-space:nowrap; letter-spacing:.01em}
+.brand b{color:var(--gold); font-weight:600}
+.nav{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; min-width:0; flex:1}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none; color:var(--muted); text-decoration:none; font-size:13.5px; padding:6px 10px; border-radius:999px}
+.nav a:hover{color:var(--fg); background:var(--sunk)}
+
+main{max-width:1040px; margin:0 auto; padding-block:8px 80px; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+.col{max-width:760px}
+section{padding-block:44px 8px; border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+.eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 10px}
+h1,h2,h3{font-family:var(--display); font-weight:600; text-wrap:balance; margin:0}
+h1{font-size:clamp(38px, 6vw, 60px); line-height:1.02; letter-spacing:-.01em}
+h2{font-size:clamp(28px, 4vw, 38px); line-height:1.1; margin-bottom:14px}
+h3{font-size:22px; line-height:1.2; margin-bottom:6px}
+p{margin:0 0 14px}
+.lead{font-size:18px; color:var(--muted); max-width:640px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+
+.hero{padding-block:48px 36px}
+.hero-meta{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:22px; font-size:14px; color:var(--muted)}
+.hero-meta span::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--gold-fill); margin-right:8px; vertical-align:middle}
+.have{display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:30px}
+.have div{background:var(--surface); padding:16px 18px}
+.have strong{display:block; font-family:var(--display); font-size:30px; line-height:1; color:var(--gold); font-weight:600; font-variant-numeric:tabular-nums}
+.have span{font-size:14px; color:var(--muted)}
+
+.levels{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin:18px 0 8px}
+.lv{border:1px solid var(--line); border-radius:var(--r); padding:14px; background:var(--surface); min-width:0}
+.lv .n{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.lv h3{font-size:19px; margin:4px 0}
+.lv p{font-size:14px; color:var(--muted); margin:0}
+.lv.now{border-color:var(--gold-fill)}
+.lv.goal{background:var(--gold-soft); border-color:var(--gold-fill)}
+.lv .tag{display:inline-block; margin-top:8px; font-size:12px; font-weight:600; color:var(--gold)}
+@media (max-width:760px){ .levels{grid-template-columns:repeat(2, minmax(0,1fr))} }
+
+.models{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-top:16px}
+.md{border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:var(--surface); min-width:0}
+.md h3{font-size:20px}
+.md p{font-size:14px; margin:0; color:var(--muted)}
+.md.no{background:var(--sunk)}
+.md.no h3{text-decoration:line-through; text-decoration-color:var(--muted)}
+@media (max-width:760px){ .models{grid-template-columns:repeat(2, minmax(0,1fr))} }
+
+.plan{display:flex; flex-wrap:wrap; gap:10px; margin:16px 0}
+.plan div{flex:1 1 200px; border-radius:var(--r); padding:14px 16px; border:1px solid var(--line); background:var(--surface)}
+.plan .k{font-size:12px; letter-spacing:.1em; text-transform:uppercase; font-weight:600}
+.plan .keep .k{color:var(--ok)} .plan .cut .k{color:var(--muted)} .plan .take .k{color:var(--gold)}
+.plan p{margin:4px 0 0; font-size:15px}
+
+.progress{display:flex; align-items:center; gap:12px; margin:18px 0 10px; font-size:14px; color:var(--muted)}
+.progress b{color:var(--fg); font-variant-numeric:tabular-nums}
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px}
+.step{display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px; align-items:start; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:16px 18px}
+.step input{appearance:none; width:22px; height:22px; border:1.5px solid var(--muted); border-radius:6px; margin:3px 0 0; cursor:pointer; display:grid; place-content:center; background:transparent}
+.step input:checked{background:var(--ok); border-color:var(--ok)}
+.step input:checked::after{content:""; width:6px; height:11px; border:solid var(--surface); border-width:0 2px 2px 0; transform:rotate(45deg) translate(-1px,-1px)}
+.step.done{background:var(--sunk)}
+.step.done h3{color:var(--muted)}
+.step h3{font-family:var(--text); font-size:16.5px; font-weight:600; margin-bottom:4px}
+.step p{margin:0 0 6px; font-size:15px}
+.step p:last-child{margin-bottom:0}
+.step .who{font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--you)}
+
+.tree{font-family:var(--mono); font-size:13.5px; line-height:1.75; background:var(--sunk); border:1px solid var(--line); border-radius:var(--r); padding:16px 18px; overflow-x:auto; white-space:pre; margin:14px 0}
+.tree i{font-style:normal; color:var(--muted)}
+.tree b{font-weight:500; color:var(--gold)}
+
+.prompt{border:1px solid var(--line); border-radius:var(--r); background:var(--surface); margin:14px 0; overflow:hidden}
+.prompt-h{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line)}
+.prompt-h h3{font-family:var(--text); font-size:15.5px; font-weight:600; margin:0}
+.prompt-h .where{display:block; font-size:12.5px; color:var(--muted); font-weight:400}
+.prompt pre{margin:0; padding:16px; font-family:var(--mono); font-size:13.5px; line-height:1.65; white-space:pre-wrap; word-break:break-word; background:var(--sunk)}
+.copy{flex:none; font:600 13px var(--text); color:var(--fg); background:transparent; border:1px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer}
+.copy:hover{border-color:var(--gold-fill)}
+.copy.ok{background:var(--ok-soft); color:var(--ok); border-color:transparent}
+.prompt-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 14px}
+@media (max-width:820px){ .prompt-grid{grid-template-columns:minmax(0,1fr)} }
+
+.kit{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:16px}
+.kit div{border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:var(--surface); min-width:0}
+.kit code{font-family:var(--mono); font-size:13px; color:var(--gold); word-break:break-word}
+.kit p{margin:4px 0 0; font-size:14.5px; color:var(--muted)}
+@media (max-width:820px){ .kit{grid-template-columns:repeat(2, minmax(0,1fr))} }
+@media (max-width:520px){ .kit{grid-template-columns:minmax(0,1fr)} }
+.books{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.books span{font-size:13px; border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--muted); background:var(--surface)}
+
+.tbl{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); margin-top:14px}
+table{border-collapse:collapse; width:100%; min-width:560px; font-size:14.5px; background:var(--surface)}
+th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+
+.rules{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-top:16px}
+.rules div{border-left:3px solid var(--gold-fill); padding:4px 0 4px 14px}
+.rules h3{font-family:var(--text); font-size:15.5px; font-weight:600}
+.rules p{font-size:14.5px; color:var(--muted); margin:0}
+@media (max-width:640px){ .rules{grid-template-columns:minmax(0,1fr)} }
+
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface); margin:6px 0 16px}
+.seg button{font:600 14px var(--text); color:var(--muted); background:transparent; border:0; border-radius:999px; padding:7px 16px; cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--fg); color:var(--bg)}
+.prom{list-style:none; margin:0; padding:0; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:var(--surface)}
+.prom li{display:grid; grid-template-columns:96px minmax(0,1fr); gap:14px; padding:12px 16px; border-bottom:1px solid var(--line); align-items:baseline}
+.prom li:last-child{border-bottom:0}
+.prom .group{display:block; background:var(--sunk); font-size:12px; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:var(--muted); padding:9px 16px}
+.pill{display:inline-block; font-size:12px; font-weight:600; border-radius:999px; padding:2px 9px; text-align:center; white-space:nowrap}
+.p-ok{background:var(--ok-soft); color:var(--ok)}
+.p-wait{background:var(--wait-soft); color:var(--wait)}
+.p-you{background:var(--you-soft); color:var(--you)}
+.prom p{margin:0; font-size:15px}
+.prom small{display:block; color:var(--muted); font-size:13.5px; margin-top:2px}
+@media (max-width:520px){ .prom li{grid-template-columns:minmax(0,1fr); gap:4px} .pill{justify-self:start} }
+
+details{border:1px solid var(--line); border-radius:var(--r); background:var(--surface); margin:8px 0}
+summary{cursor:pointer; padding:13px 16px; font-weight:600; list-style:none; display:flex; justify-content:space-between; gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; color:var(--gold); font-weight:500}
+details[open] summary::after{content:"\2212"}
+details .in{padding:0 16px 14px}
+.gl{display:grid; grid-template-columns:150px minmax(0,1fr); gap:6px 16px; font-size:15px}
+.gl dt{font-weight:600}
+.gl dd{margin:0; color:var(--muted)}
+@media (max-width:520px){ .gl{grid-template-columns:minmax(0,1fr)} .gl dd{margin-bottom:8px} }
+
+.note{background:var(--gold-soft); border-radius:var(--r); padding:14px 16px; font-size:15px; margin:14px 0}
+.note b{color:var(--fg)}
+.foot{margin-top:56px; padding-top:22px; border-top:1px solid var(--line); font-size:14px; color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">VR Concept <b>·</b> Claude</div>
+    <nav class="nav" aria-label="Seções">
+      <a href="#ideia">A ideia</a>
+      <a href="#plano">O plano</a>
+      <a href="#instalar">Instalar</a>
+      <a href="#prompts">Prompts</a>
+      <a href="#kit">O kit</a>
+      <a href="#tarefas">Primeiras tarefas</a>
+      <a href="#imagem">Imagem e vídeo</a>
+      <a href="#seguranca">Segurança</a>
+      <a href="#juntos">Trabalhar junto</a>
+      <a href="#combinados">Combinados</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero col">
+    <p class="eyebrow">Consultoria de IA · 23/10/2026</p>
+    <h1>Seu Claude pronto para trabalhar na VR.</h1>
+    <p class="lead" style="margin-top:18px">Tudo o que combinamos na consultoria, num lugar só: o passo a passo para instalar, os prompts prontos para colar, o kit com as skills e a biblioteca da Altta, e o que cada um de nós ficou de fazer.</p>
+    <div class="hero-meta"><span>Para a Dra. Gabriela Rosa</span><span>Feito pelo João Miguel</span><span>Mac, VS Code e Claude Code</span></div>
+    <div class="have" aria-label="O que vem no kit">
+      <div><strong>9</strong><span>skills prontas para usar</span></div>
+      <div><strong>24</strong><span>livros resumidos na Biblioteca</span></div>
+      <div><strong>40+</strong><span>vídeos, artigos e pesquisas</span></div>
+      <div><strong>1</strong><span>prompt para o Claude configurar tudo</span></div>
+    </div>
+  </div>
+
+  <section id="ideia">
+    <div class="col">
+      <p class="eyebrow">A ideia</p>
+      <h2>Sair do chat e dar contexto para a IA.</h2>
+      <p>Quem usa IA só no chat perde o mais importante: o contexto. A IA responde bem, mas não conhece a VR, os alunos, a Odontonova, o que já foi decidido. Pense numa mesa de trabalho: o que está em cima da mesa ela usa; o que ficou na gaveta, para ela, não existe.</p>
+      <p>O Claude Code resolve isso. Ele trabalha dentro de uma pasta do seu computador, lê os seus documentos, usa as suas skills e se conecta às suas ferramentas. É a mesma diferença entre uma dentista excelente num consultório vazio e a mesma dentista numa clínica equipada, com prontuário, raio X e protocolo.</p>
+    </div>
+    <div class="levels" aria-label="Os quatro jeitos de usar IA">
+      <div class="lv"><span class="n">1</span><h3>Chat solto</h3><p>Abre, pergunta, copia. Cada conversa começa do zero.</p></div>
+      <div class="lv now"><span class="n">2</span><h3>Chat com contexto</h3><p>Projetos separados por assunto. É onde você está hoje.</p><span class="tag">Você está aqui</span></div>
+      <div class="lv"><span class="n">3</span><h3>Ferramentas e skills</h3><p>A IA lê a planilha, a agenda e o Drive, e segue os seus passo a passos.</p></div>
+      <div class="lv goal"><span class="n">4</span><h3>Agêntico</h3><p>A IA planeja, executa, confere e entrega. Você orquestra e revisa.</p><span class="tag">Onde vamos chegar</span></div>
+    </div>
+    <div class="col">
+      <details>
+        <summary>As palavras que vão aparecer, explicadas</summary>
+        <div class="in">
+          <dl class="gl">
+            <dt>Modelo</dt><dd>O cérebro da IA. No Claude: Opus, Sonnet e Haiku.</dd>
+            <dt>Contexto</dt><dd>Tudo o que a IA está vendo naquela hora: instruções, arquivos, conversa.</dd>
+            <dt>Harness</dt><dd>Tudo o que fica em volta do modelo: instruções fixas, memória, ferramentas, arquivos, permissões, skills. A clínica equipada em volta da dentista.</dd>
+            <dt>CLAUDE.md</dt><dd>O manual fixo da sua pasta. O Claude lê antes de qualquer tarefa.</dd>
+            <dt>Skill</dt><dd>Um passo a passo que a IA segue sempre igual. Você ensina uma vez e ela não erra mais. É um arquivo de texto.</dd>
+            <dt>MCP</dt><dd>A tomada que liga o Claude a outro sistema (Drive, Gmail, Agenda, e em breve o OS da VR e o Attlas). Você pede em português e ele busca ou faz lá dentro.</dd>
+            <dt>Agente</dt><dd>O Claude trabalhando em ciclos para cumprir um objetivo: planeja, divide em etapas, faz, confere e entrega.</dd>
+            <dt>Sessão</dt><dd>Uma conversa no Claude Code. Uma tarefa por sessão.</dd>
+            <dt>Rotina</dt><dd>Uma tarefa que o Claude faz sozinho num dia e horário marcados.</dd>
+            <dt>Token</dt><dd>Pedaço de palavra. É assim que a IA lê e é assim que o limite do plano é contado.</dd>
+            <dt>GitHub</dt><dd>O drive dos programadores. É onde mora o kit.</dd>
+            <dt>Vercel</dt><dd>Onde uma página ou um site vai ao ar na internet.</dd>
+          </dl>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="plano">
+    <div class="col">
+      <p class="eyebrow">O plano e os modelos</p>
+      <h2>Um plano só, no Claude.</h2>
+      <p>Com o mesmo valor que você paga hoje no ChatGPT Pro, o Claude Max dá uso praticamente sem limite para o seu ritmo, com os modelos mais avançados.</p>
+    </div>
+    <div class="plan">
+      <div class="take"><span class="k">Assinar</span><p><b>Claude Max (o de 5x)</b>. É o suficiente para tudo o que você vai fazer.</p></div>
+      <div class="cut"><span class="k">Cancelar</span><p>O ChatGPT Pro e a ferramenta só de escrita. O Claude faz os dois.</p></div>
+      <div class="keep"><span class="k">Manter</span><p>O Gemini Pro, que já vem com o espaço do Google Drive, para consulta rápida no celular.</p></div>
+    </div>
+    <div class="models" aria-label="Os modelos do Claude">
+      <div class="md"><h3>Opus 5.5</h3><p>Para criar do zero, pensar, tarefa complexa e coordenar outros agentes.</p></div>
+      <div class="md"><h3>Sonnet 5.5</h3><p>O do dia a dia. Gasta pouco e resolve muito bem.</p></div>
+      <div class="md"><h3>Haiku 5.5</h3><p>Tarefa simples e repetida, como rotinas. Muito barato.</p></div>
+      <div class="md no"><h3>Fable</h3><p>Não use. Gasta o limite do plano muito rápido, e o Opus faz o mesmo trabalho.</p></div>
+    </div>
+  </section>
+
+  <section id="instalar">
+    <div class="col">
+      <p class="eyebrow">Instalar</p>
+      <h2>Oito passos. Do sétimo em diante, o Claude faz.</h2>
+      <p>Marque cada passo quando terminar. O progresso fica salvo neste navegador.</p>
+      <div class="progress" aria-live="polite"><span><b id="feitos">0</b> de <b id="total">8</b> passos feitos</span></div>
+      <ol class="steps" id="steps">
+        <li class="step"><input type="checkbox" id="s1" aria-label="Passo 1 feito"><div><span class="who">Você</span><h3>Assinar o Claude Max</h3><p>Em <a href="https://claude.com/pricing" target="_blank" rel="noopener">claude.com/pricing</a>, com a sua conta. Depois, cancele o ChatGPT Pro.</p></div></li>
+        <li class="step"><input type="checkbox" id="s2" aria-label="Passo 2 feito"><div><span class="who">Você</span><h3>Baixar e instalar o VS Code</h3><p>No site oficial: <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">code.visualstudio.com</a>. Escolha a versão para Mac e arraste para a pasta Aplicativos.</p></div></li>
+        <li class="step"><input type="checkbox" id="s3" aria-label="Passo 3 feito"><div><span class="who">Você</span><h3>Instalar o Claude Code dentro do VS Code</h3><p>No VS Code, clique no ícone de quadradinhos da barra da esquerda (Extensões), procure "Claude Code", clique em Instalar e entre com a sua conta do Claude. Vai aparecer o símbolo do Claude no alto da tela.</p></div></li>
+        <li class="step"><input type="checkbox" id="s4" aria-label="Passo 4 feito"><div><span class="who">Você</span><h3>Criar a conta no GitHub e me mandar o seu usuário</h3><p>Em <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>, na sua conta pessoal. Me mande o nome de usuário: eu libero o acesso ao kit, que é privado. Chega um convite por e-mail; clique em aceitar.</p></div></li>
+        <li class="step"><input type="checkbox" id="s5" aria-label="Passo 5 feito"><div><span class="who">Você</span><h3>Conta na Vercel</h3><p>Você já criou na call. Se precisar: <a href="https://vercel.com/signup" target="_blank" rel="noopener">vercel.com/signup</a>, entrando com o GitHub. É grátis e serve para colocar páginas no ar.</p></div></li>
+        <li class="step"><input type="checkbox" id="s6" aria-label="Passo 6 feito"><div><span class="who">Você</span><h3>Criar a pasta principal e abrir no VS Code</h3><p>Em Documentos, crie uma pasta chamada <b>Gabriela</b>. No VS Code: menu Arquivo, Abrir Pasta, e escolha essa pasta. É uma pasta só para tudo: a VR, a Odontonova e o pessoal ficam dentro dela, e o Claude cria as subpastas.</p></div></li>
+        <li class="step"><input type="checkbox" id="s7" aria-label="Passo 7 feito"><div><span class="who">Você e o Claude</span><h3>Abrir o Claude e colar o primeiro prompt</h3><p>Clique no símbolo do Claude no alto e cole o <a href="#p-config">prompt de configuração</a>. A partir daqui ele conduz e te diz onde clicar.</p></div></li>
+        <li class="step"><input type="checkbox" id="s8" aria-label="Passo 8 feito"><div><span class="who">O Claude</span><h3>O Claude configura o resto</h3><p>Ele instala o que falta no Mac, baixa o kit, organiza as pastas, instala as skills, deixa o VS Code em português, liga o Google Drive, o Gmail, a Agenda, o Chrome, o Higgsfield e a Kie, e faz o check-up de segurança do computador. Você só faz os logins.</p></div></li>
+      </ol>
+    </div>
+    <div class="col">
+      <h3 style="margin-top:28px">Como a sua pasta vai ficar</h3>
+<div class="tree" role="img" aria-label="A estrutura da pasta principal">Documentos/<b>Gabriela</b>/
+  CLAUDE.md               <i>o manual fixo: quem você é, as empresas, as regras</i>
+  VR Concept/             <i>documentos da empresa, decisões, logo, marketing, cursos</i>
+  Odontonova/             <i>tudo da clínica</i>
+  Pessoal/                <i>agenda, estudos, inglês, casa, quem-sou-eu.md</i>
+  Biblioteca/             <i>os 24 livros e as fontes, resumidos</i>
+  Pedidos para o João/    <i>ideias e pedidos organizados para mim</i>
+  _kit/                   <i>o kit do GitHub (só leitura)</i>
+
+~/.claude/skills/         <i>as skills, que valem em qualquer pasta</i></div>
+      <p class="small muted">Uma tarefa por sessão: assunto novo, sessão nova (o botão de mais, no alto do Claude). Dê nome às sessões para achar depois. E use o botão de falar: dá para pedir tudo por voz.</p>
+    </div>
+  </section>
+
+  <section id="prompts">
+    <div class="col">
+      <p class="eyebrow">Prompts prontos</p>
+      <h2>É só copiar e colar.</h2>
+      <p>O primeiro configura tudo. Os outros você usa quando precisar.</p>
+    </div>
+    <div class="prompt" id="p-config">
+      <div class="prompt-h"><h3>1. Configurar tudo<span class="where">Cole no Claude, na pasta Gabriela</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Oi, Claude. Sou a Dra. Gabriela Rosa, sócia da VR Concept, e estou começando agora no Claude Code. O João, nosso CTO, montou um kit para mim no GitHub: https://github.com/adminaltta-ui/kit-claude-vr
+
+Configure tudo para mim, um passo por vez, me explicando em português simples onde eu clico:
+1. Instale no meu Mac o que faltar para baixar o kit (o git e o GitHub CLI). Peça licença antes de instalar.
+2. Me ajude a entrar na minha conta do GitHub pelo navegador.
+3. Baixe o kit para dentro desta pasta, numa pasta chamada _kit.
+4. Leia o arquivo _kit/INSTALAR.md inteiro e siga o roteiro dele até o fim.
+
+Sempre que um passo depender de mim, me diga exatamente o que fazer e espere eu responder "pronto".</pre>
+    </div>
+    <div class="prompt-grid">
+      <div class="prompt">
+        <div class="prompt-h"><h3>2. Trazer o que o ChatGPT sabe de você<span class="where">Cole no ChatGPT; depois cole a resposta no Claude</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Quero levar para outra ferramenta tudo o que você sabe sobre mim. Escreva um documento completo, organizado por assunto, com:
+1. Quem eu sou: formação, trabalho, empresas e o meu papel em cada uma.
+2. A VR Concept: produtos, alunos, decisões e projetos em andamento.
+3. A Odontonova: equipe, processos e os números que eu já te contei.
+4. Como eu gosto que você escreva e trabalhe comigo.
+5. Minhas rotinas, minha agenda e os assuntos pessoais que eu já trouxe.
+6. Tudo o que estiver nos meus projetos e nas memórias salvas.
+Não resuma demais. O que você não tiver certeza, marque como "a confirmar".</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-h"><h3>3. Check-up de segurança do Mac<span class="where">Cole no Claude</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Faça um check-up de segurança do meu Mac: atualizações, FileVault, firewall, bloqueio de tela, senhas, verificação em duas etapas nas contas importantes (Google, Apple, GitHub, Hotmart, banco), programas que eu não reconheço e backup.
+Me mostre o que está bom e o que falta, e só mude alguma coisa depois que eu aprovar.</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-h"><h3>4. Criar uma rotina<span class="where">Exemplo: o fechamento do mês</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Quero uma rotina: todo dia 30, às 9h, monte o resumo financeiro do mês da VR Concept a partir das planilhas da pasta VR Concept/Financeiro, com os números principais, o que subiu, o que caiu e o que precisa da minha atenção.
+Me explique como a rotina vai rodar e o que eu preciso deixar ligado.</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-h"><h3>5. Transformar uma tarefa em skill<span class="where">Para o que você repete toda semana</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Toda semana eu faço [descreva a tarefa, do jeito que você faz hoje]. Quero que isso vire uma skill.
+Me faça as perguntas que faltarem, escreva a skill do meu jeito e teste com um exemplo.</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-h"><h3>6. Um agente de suporte aos alunos<span class="where">Você revisa antes de enviar</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>Quero um agente que me ajude no suporte dos alunos da VR: ele lê a dúvida, procura a resposta nos materiais da pasta VR Concept e escreve a resposta no tom da VR, para eu revisar antes de enviar.
+Monte o agente, me mostre como chamar e teste com três dúvidas de exemplo.</pre>
+      </div>
+      <div class="prompt">
+        <div class="prompt-h"><h3>7. Atualizar o kit<span class="where">Quando eu avisar que tem novidade</span></h3><button class="copy" type="button">Copiar</button></div>
+<pre>O João avisou que o kit tem novidade. Siga a parte "Atualizar o kit" do _kit/INSTALAR.md e me diga o que chegou.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="kit">
+    <div class="col">
+      <p class="eyebrow">O kit</p>
+      <h2>O que a Altta usa, agora no seu Claude.</h2>
+      <p>O kit é um repositório privado no GitHub. O Claude baixa e instala sozinho no passo 8.</p>
+    </div>
+    <h3 style="margin-top:22px">As skills prontas</h3>
+    <div class="kit">
+      <div><code>carrossel-vr-concept</code><p>Do tema ao carrossel pronto em JPEG, na identidade da VR, com a legenda. A que nasceu na nossa call.</p></div>
+      <div><code>pesquisa-com-youtube</code><p>Toda pesquisa junta a internet e o YouTube, lendo a fala dos vídeos.</p></div>
+      <div><code>consultar-biblioteca</code><p>Antes de decidir preço, oferta, anúncio ou curso, consulta os livros e devolve a recomendação com a fonte.</p></div>
+      <div><code>guardar-na-biblioteca</code><p>Você manda um livro, artigo ou vídeo e ele guarda um resumo para usar depois.</p></div>
+      <div><code>pedido-para-o-joao</code><p>Organiza a sua ideia ou o problema num arquivo pronto para mim, com o rascunho da tela.</p></div>
+      <div><code>html-premium-kit</code><p>Páginas HTML bonitas e interativas de primeira: materiais, simuladores, páginas de aula.</p></div>
+      <div><code>manual-html</code><p>Junta vários documentos num manual bonito para ler.</p></div>
+      <div><code>kie-models</code><p>Gera imagem e vídeo pela Kie, comparando o modelo e o preço.</p></div>
+      <div><code>gauntlet-loop</code><p>Uma revisão rigorosa antes de entregar, para o trabalho que tem que sair impecável.</p></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">O Claude também instala as skills oficiais da Anthropic de Word, Excel, PowerPoint e PDF, a de páginas bonitas e a que cria skills novas.</p>
+
+    <h3 style="margin-top:28px">A Biblioteca</h3>
+    <div class="col"><p>Os resumos longos de 24 livros de marketing, vendas, estratégia e retenção, mais de 40 vídeos, artigos e pesquisas de mercado. É a base que a Altta usa em toda decisão. Os PDFs dos livros não vão (direito autoral); os resumos, sim.</p></div>
+    <div class="books" aria-label="Alguns livros da Biblioteca">
+      <span>$100M Leads e $100M Offers (Hormozi)</span><span>The Great CEO Within</span><span>Breakthrough Advertising</span><span>StoryBrand</span><span>As Armas da Persuasão</span><span>Receita Previsível</span><span>Gap Selling</span><span>Pitch Anything</span><span>Negocie Como se Sua Vida Dependesse Disso</span><span>Never Lose a Customer Again</span><span>Customer Success</span><span>Scaling Up</span><span>Good Strategy Bad Strategy</span><span>Tração</span><span>DotCom Secrets</span><span>Sell Like Crazy</span><span>Make It Stick</span><span>Design for How People Learn</span><span>e mais</span>
+    </div>
+
+    <h3 style="margin-top:28px">E ainda</h3>
+    <div class="kit">
+      <div><code>VR Concept/</code><p>O documento base, a pesquisa do aluno, as decisões da reestruturação e o logo. O Claude já começa sabendo quem é a VR.</p></div>
+      <div><code>referencias/</code><p>As skills de marketing da Altta (post, roteiro, anúncio, plano do mês) para o Claude criar as versões da VR, e a pesquisa da tese da Sequoia sobre serviço com IA.</p></div>
+      <div><code>material/</code><p>A apresentação da consultoria, para você e para o Dr. Vinícius, e este guia.</p></div>
+    </div>
+  </section>
+
+  <section id="tarefas">
+    <div class="col">
+      <p class="eyebrow">Primeiras tarefas</p>
+      <h2>Comece pelo que hoje toma o seu tempo.</h2>
+      <p>Cada uma é um prompt para colar. Troque o que está entre colchetes.</p>
+    </div>
+    <div class="prompt-grid">
+      <div class="prompt"><div class="prompt-h"><h3>Carrossel para o Instagram</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Faz um carrossel para o Instagram da VR Concept sobre [tema]. Antes de exportar, me mostra o roteiro das lâminas.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>A aula do Reino Unido</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Abre a aula do Vinícius em [arquivo .pptx] e escreve, para cada slide, o texto em inglês que explica o slide, no formato que o curso do Reino Unido pede: [cole o modelo]. Entregue num documento Word.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>Os depoimentos dos alunos</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Na pasta [VR Concept/Depoimentos] estão os vídeos dos alunos. Corta cada um nos melhores 30 a 60 segundos, coloca legenda em português e me mostra o primeiro antes de fazer os outros.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>O vídeo que viralizou</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Este vídeo do Vinícius passou de 1 milhão de visualizações no orgânico: [arquivo]. Entenda por que ele funcionou e me proponha 10 variações de gancho e roteiro no mesmo estilo, com a legenda de cada uma.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>O Drive dos cursos</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Liga no meu Google Drive, olha a pasta dos cursos da VR Academy e me propõe uma organização. Só mexa depois que eu aprovar.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>As planilhas dos cursos</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Abre as planilhas dos cursos em [pasta] e transforma cada uma num material entregável para o aluno, bonito e no padrão da VR, pronto para lançar.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>A página de links da bio</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Faz a página de links da bio do Instagram da VR Concept, na identidade da VR, com estes links: [links]. Quero ver antes de colocar no ar na Vercel.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>A sua semana num lugar só</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Monta uma página só para mim que organiza a minha semana: a clínica, a VR, o mestrado do Vinícius, os projetos e a casa. Puxa da minha Google Agenda e me mostra o que está apertado.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>Aprender a escrever melhor</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Pesquisa os melhores conteúdos sobre escrita para Instagram e texto de venda para dentistas, na internet e no YouTube, guarda o melhor na Biblioteca e cria uma skill de escrita da VR com o que aprendeu.</pre></div>
+      <div class="prompt"><div class="prompt-h"><h3>Estudar inglês</h3><button class="copy" type="button">Copiar</button></div>
+<pre>Quero estudar inglês com você 20 minutos por dia, a partir de filmes e da linguagem da odontologia. Monte o plano e a primeira aula.</pre></div>
+    </div>
+    <div class="note"><b>Os quatro Instagrams</b> (o seu, o do Vinícius, o da VR Concept e o do Attlas): quando a primeira skill de conteúdo estiver boa, o Claude cria a versão de cada perfil, com o tom de cada um. Uma por vez.</div>
+  </section>
+
+  <section id="imagem">
+    <div class="col">
+      <p class="eyebrow">Imagem e vídeo</p>
+      <h2>Dentro do Claude, sem abrir outro programa.</h2>
+      <p>As duas plataformas se ligam ao Claude. Você pede com o contexto da VR e ele gera. Crie a conta no site e deixe o Claude fazer a ligação; se não souber usar, mande o link do site para ele e peça as instruções.</p>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th></th><th>Higgsfield</th><th>Kie</th></tr></thead>
+        <tbody>
+          <tr><td><b>Site</b></td><td><a href="https://higgsfield.ai" target="_blank" rel="noopener">higgsfield.ai</a></td><td><a href="https://kie.ai" target="_blank" rel="noopener">kie.ai</a></td></tr>
+          <tr><td><b>Como paga</b></td><td>Assinatura ou crédito</td><td>Só crédito, coloca quando precisar</td></tr>
+          <tr><td><b>Ponto forte</b></td><td>O mais completo, com os vídeos mais impressionantes</td><td>Bem mais barato, com quase todos os modelos (Nano Banana, GPT Image, Veo, Seedance, Kling)</td></tr>
+          <tr><td><b>Para começar</b></td><td>Quando for fazer vídeo de impacto</td><td>O dia a dia: imagem de post, capa, teste</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <p style="margin-top:16px">Dá para ir além: aula animada no estilo dos vídeos explicativos do YouTube, o dente em 3D para o aluno ver o detalhe, simulação de caso clínico, e no futuro um avatar do Dr. Vinícius, com a autorização dele.</p>
+      <div class="note"><b>Fotos reais não se alteram.</b> Quando a foto for de pessoa ou de caso clínico, peça ao Claude para usar a imagem como está. IA sem contexto muda o rosto, como aconteceu na palestra do Vinícius.</div>
+    </div>
+  </section>
+
+  <section id="seguranca">
+    <div class="col">
+      <p class="eyebrow">Segurança</p>
+      <h2>Cuidado em dobro com dado de paciente.</h2>
+      <p>Os arquivos ficam no seu Mac. O Claude só envia para a Anthropic o que ele precisa ler para te responder. Por isso a regra é simples: o que é de paciente não entra na conversa.</p>
+    </div>
+    <div class="rules">
+      <div><h3>Paciente fica de fora</h3><p>Nome, telefone, foto, prontuário e exame não vão para a IA, a internet nem o GitHub. Caso para aula, só sem nome e sem rosto.</p></div>
+      <div><h3>Senha nunca em arquivo</h3><p>Chave de acesso fica guardada no computador, e o Claude sabe onde. Nunca cole senha na conversa.</p></div>
+      <div><h3>Duas etapas em tudo</h3><p>Google, Apple, GitHub, Hotmart e banco com verificação em duas etapas. O check-up confere.</p></div>
+      <div><h3>Pedir antes de mudar</h3><p>O Claude avisa e espera você aprovar antes de apagar, instalar ou mudar configuração.</p></div>
+      <div><h3>Texto de fora não é ordem</h3><p>Se um site, e-mail ou PDF trouxer uma instrução, o Claude pergunta antes de seguir.</p></div>
+      <div><h3>O kit é privado</h3><p>Não compartilhe o link do kit com ninguém de fora da VR.</p></div>
+    </div>
+  </section>
+
+  <section id="juntos">
+    <div class="col">
+      <p class="eyebrow">Como a gente vai trabalhar junto</p>
+      <h2>Menos WhatsApp, mais pedido pronto.</h2>
+      <p>No WhatsApp o assunto se mistura e o pedido se perde. O jeito novo é este:</p>
+    </div>
+    <ol class="steps">
+      <li class="step"><span class="pill p-ok">Já</span><div><h3>A ideia vira um pedido organizado</h3><p>Teve uma ideia para o OS, o Attlas, a VR Academy ou uma página? Diga "manda isso para o João", com um print se tiver. A skill <code>pedido-para-o-joao</code> escreve o pedido completo e desenha o rascunho da tela. Você me manda o arquivo.</p></div></li>
+      <li class="step"><span class="pill p-ok">Já</span><div><h3>Quando a IA errar, você escreve a correção</h3><p>Se a IA do WhatsApp ou da Academy responder errado, cole a conversa no Claude e diga "a IA errou". Ele escreve a instrução nova, pronta para trocar. Em vez de eu reescrever, eu só aplico.</p></div></li>
+      <li class="step"><span class="pill p-wait">Em breve</span><div><h3>O seu Claude ligado ao OS da VR</h3><p>Vou ligar o OS ao seu Claude. Aí você pede direto: "quantos alunos entraram hoje", "sobe as datas da turma no OS", "planeja o financeiro da primeira turma", "muda esse trecho da página de vendas", "ajusta o prompt da IA". A mudança passa pela minha aprovação e sobe sozinha. O pedido também passa a cair direto lá.</p></div></li>
+      <li class="step"><span class="pill p-wait">Em breve</span><div><h3>O Attlas Odonto para você testar</h3><p>Com 59 modelos de agentes de IA prontos para a clínica. Estou terminando a parte de segurança antes de abrir, por causa da onda de ataques dos últimos dias. Você testa, me dá os retornos pelo mesmo caminho dos pedidos, e eu ajusto.</p></div></li>
+    </ol>
+  </section>
+
+  <section id="combinados">
+    <div class="col">
+      <p class="eyebrow">Combinados da reunião</p>
+      <h2>O que cada um ficou de fazer.</h2>
+      <p>A parte da consultoria de IA está quase toda neste guia e no kit. As decisões da VR Concept (os produtos, o presencial, a VR Academy) vêm num segundo material, só delas.</p>
+    </div>
+    <div class="seg" role="tablist" aria-label="Quem faz">
+      <button type="button" role="tab" aria-selected="true" aria-controls="t-joao" id="b-joao">O João</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="t-voce" id="b-voce">Você</button>
+    </div>
+    <div id="t-joao" role="tabpanel" aria-labelledby="b-joao">
+      <ul class="prom">
+        <li class="group">Consultoria de IA</li>
+        <li><span class="pill p-ok">Feito</span><p>O material com o passo a passo para instalar<small>Este guia.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>As skills, a biblioteca e o contexto da VR que se aplicam a você<small>No kit. O acesso eu libero quando você me mandar o usuário do GitHub.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>A apresentação da consultoria, para você e para o Dr. Vinícius<small>No kit, em material.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>O Claude configurando tudo sozinho, com o VS Code em português<small>O prompt 1 e o roteiro do kit.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>Como trazer o histórico do ChatGPT<small>O prompt 2.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>Como criar rotinas<small>O prompt 4.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>A skill de carrossel e as de marketing da Altta como modelo<small>No kit.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>As plataformas de imagem e vídeo<small>A seção Imagem e vídeo.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>Proteger o computador<small>O check-up do prompt 3.</small></p></li>
+        <li><span class="pill p-ok">Feito</span><p>O artigo da tese da Sequoia (serviço com IA)<small>No kit, em referencias.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>Ligar o OS da VR ao seu Claude<small>Para você mudar página, IA e prompt direto, com a minha aprovação.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>Liberar o Attlas Odonto para você testar<small>Previsto para a semana de 26/10.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>Os exemplos de vídeo do Seedance</p></li>
+        <li><span class="pill p-wait">Falta</span><p>Uma call para ensinar o Claude ao Dr. Vinícius<small>Quando ele tiver um tempo. Cada um com a sua conta e o seu jeito.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>Reconectar as contas Google da VR no meu Claude<small>Vou precisar do código da verificação em duas etapas com você.</small></p></li>
+        <li class="group">Estratégia da VR Concept</li>
+        <li><span class="pill p-wait">Falta</span><p>As taxas exatas da HyperCash<small>Confirmo com o meu sócio e te passo.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>A apresentação de vendas do nosso programa de R$ 12 mil, com todos os entregáveis</p></li>
+        <li><span class="pill p-wait">Falta</span><p>A estrutura de um programa de acompanhamento da Altta, como modelo</p></li>
+        <li><span class="pill p-wait">Falta</span><p>Terminar a VR Academy o quanto antes</p></li>
+        <li><span class="pill p-wait">Falta</span><p>Migrar os alunos da plataforma antiga para a VR Academy<small>Com o preenchimento do estado obrigatório na entrada.</small></p></li>
+        <li><span class="pill p-wait">Falta</span><p>Separar a base por estado (São Paulo, Rio de Janeiro, Minas Gerais)</p></li>
+        <li><span class="pill p-wait">Falta</span><p>Montar a arquitetura da empresa, os funis e o comercial no OS da VR</p></li>
+        <li><span class="pill p-wait">Falta</span><p>Marcar a nossa call da semana para desenhar a estrutura dos produtos</p></li>
+      </ul>
+    </div>
+    <div id="t-voce" role="tabpanel" aria-labelledby="b-voce" hidden>
+      <ul class="prom">
+        <li class="group">Para começar no Claude</li>
+        <li><span class="pill p-you">Você</span><p>Assinar o Claude Max e cancelar o ChatGPT Pro</p></li>
+        <li><span class="pill p-you">Você</span><p>Baixar o VS Code</p></li>
+        <li><span class="pill p-you">Você</span><p>Criar a conta no GitHub e me mandar o usuário</p></li>
+        <li><span class="pill p-ok">Feito</span><p>Criar a conta na Vercel<small>Na própria call.</small></p></li>
+        <li><span class="pill p-you">Você</span><p>Ligar a sua conta pessoal ao Claude e ao GitHub<small>O Claude conduz, no passo 8.</small></p></li>
+        <li><span class="pill p-you">Você</span><p>Me passar o código de duas etapas quando eu reconectar as contas Google da VR</p></li>
+        <li class="group">Para a VR Concept</li>
+        <li><span class="pill p-you">Você</span><p>Melhorar as planilhas dos cursos para virarem entregáveis prontos para lançar</p></li>
+        <li><span class="pill p-you">Você</span><p>Definir a data do presencial do ano que vem, já no modelo novo</p></li>
+        <li><span class="pill p-you">Você</span><p>Colocar o VR Scan no ar, grátis, para captar</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="foot col">
+    <p>O Claude não substitui a Dra. Gabriela. Ele multiplica o que você já sabe fazer.</p>
+    <p class="small">Qualquer dúvida no caminho, pergunte ao próprio Claude: ele explica. E o que não der, me chama.</p>
+  </div>
+</main>
+
+<script>
+(function(){
+  // Copiar os prompts
+  document.querySelectorAll('.prompt').forEach(function(box){
+    var btn = box.querySelector('.copy'), pre = box.querySelector('pre');
+    if(!btn || !pre) return;
+    btn.addEventListener('click', function(){
+      var text = pre.innerText.trim();
+      var done = function(){ btn.textContent = 'Copiado'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 1800); };
+      var fallback = function(){ var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selecionado: Cmd + C'; };
+      try { navigator.clipboard.writeText(text).then(done, fallback); } catch(e){ fallback(); }
+    });
+  });
+
+  // Checklist com progresso salvo neste navegador
+  var KEY = 'kit-claude-gabriela-passos';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e){ saved = {}; }
+  var boxes = document.querySelectorAll('#steps input[type=checkbox]');
+  var feitos = document.getElementById('feitos');
+  document.getElementById('total').textContent = boxes.length;
+  function update(){
+    var n = 0;
+    boxes.forEach(function(b){ b.closest('.step').classList.toggle('done', b.checked); if(b.checked) n++; });
+    feitos.textContent = n;
+  }
+  boxes.forEach(function(b){
+    b.checked = !!saved[b.id];
+    b.addEventListener('change', function(){
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e){}
+      update();
+    });
+  });
+  update();
+
+  // Abas dos combinados
+  var tabs = [['b-joao','t-joao'],['b-voce','t-voce']];
+  tabs.forEach(function(t){
+    document.getElementById(t[0]).addEventListener('click', function(){
+      tabs.forEach(function(o){
+        var on = o[0] === t[0];
+        document.getElementById(o[0]).setAttribute('aria-selected', on);
+        document.getElementById(o[1]).hidden = !on;
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
