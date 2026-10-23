@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nome da página</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo-base.css">
+<!-- estilos próprios da página vão num arquivo à parte (estilo.css), carregado depois do estilo-base -->
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <span class="tag0">Etiqueta curta</span>
+  <h1>Título com <em>uma palavra em destaque</em></h1>
+  <p class="sub">Uma frase do que a pessoa vai conseguir fazer aqui.</p>
+</div></header>
+
+<nav class="tabs"><div class="in" id="tabs"></div></nav>
+
+<section class="panel" id="p-inicio"><div class="wrap">
+  <h2>Comece por aqui</h2>
+  <p class="lead">Uma frase de abertura.</p>
+  <div class="grid" id="cartoes"></div>
+  <div class="warn"><b>Aviso importante.</b> Texto curto.</div>
+</div></section>
+
+<section class="panel" id="p-simulador"><div class="wrap">
+  <h2>Simulador</h2>
+  <div class="bar"><div class="seg" id="modo"><button class="on" data-v="a">Opção A</button><button data-v="b">Opção B</button></div></div>
+  <div class="card">
+    <div class="grid"><label>Valor<input type="number" id="v1" value="1000"></label><label>Taxa (%)<input type="number" id="v2" value="10"></label></div>
+    <div class="stats" id="saida"></div>
+  </div>
+</div></section>
+
+<script src="helpers.js"></script>
+<script>
+const TABS=[['inicio','Comece aqui'],['simulador','Simulador']];
+const INIT={
+  inicio(){
+    set($('#cartoes'),['Um','Dois','Três'].map(t=>`<div class="card"><h3>${t}</h3><p class="muted" style="margin:0">Texto do cartão.</p></div>`).join(''));
+    stagger('#cartoes > .card');
+  },
+  simulador(){
+    let modo='a';
+    const calc=()=>{const v=+$('#v1').value||0,t=(+$('#v2').value||0)/100; stats($('#saida'),[{l:'Bruto',v},{l:'Taxa',v:v*t,c:'bad'},{l:'Líquido ('+modo.toUpperCase()+')',v:v*(1-t),c:'gold'}])};
+    $('#v1').oninput=$('#v2').oninput=calc; seg('#modo',v=>{modo=v;calc()}); calc();
+  }
+};
+kit.abas(TABS,INIT);
+</script>
+</body>
+</html>

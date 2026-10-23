@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Carrossel VR Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* A marca da VR Concept: grafite de base, dourado só de acento (fio, número, palavra de virada). */
+  :root {
+    --grafite: #252525;
+    --dourado: #E7B84E;
+    --dourado-tinta: #977020; /* o dourado legível sobre o fundo claro */
+    --papel: #F5F5F5;
+    --cinza: #616161;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #d4d4d4; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; font-family: 'DM Sans', sans-serif; }
+
+  /* A lâmina: 1080x1350, o tamanho do feed do Instagram. */
+  .s { width: 1080px; height: 1350px; position: relative; overflow: hidden; padding: 0 96px; display: flex; flex-direction: column; justify-content: center; }
+  .escura { background: radial-gradient(ellipse at 50% 0%, #3a3a3a 0%, var(--grafite) 55%, #161616 100%); color: #fff; }
+  .clara { background: var(--papel); color: var(--grafite); }
+
+  .topo { position: absolute; top: 72px; left: 96px; right: 96px; display: flex; justify-content: space-between; align-items: center; font: 500 22px 'DM Sans'; letter-spacing: .32em; text-transform: uppercase; }
+  .topo img { height: 64px; }
+  .escura .topo { color: rgba(255,255,255,.5); }
+  .clara .topo { color: var(--cinza); }
+
+  .fio { width: 88px; height: 3px; background: var(--dourado); margin-bottom: 48px; }
+  .chapeu { font: 500 26px 'DM Sans'; letter-spacing: .28em; text-transform: uppercase; color: var(--dourado); margin-bottom: 40px; }
+  .clara .chapeu { color: var(--dourado-tinta); }
+
+  h1 { font: 600 124px/1.02 'Cormorant Garamond', serif; }
+  h2 { font: 600 88px/1.06 'Cormorant Garamond', serif; }
+  h1 em, h2 em { font-style: italic; color: var(--dourado); }
+  .clara h2 em { color: var(--dourado-tinta); }
+  p { font: 400 38px/1.42 'DM Sans'; margin-top: 44px; max-width: 840px; }
+  .escura p { color: rgba(255,255,255,.78); }
+  .clara p { color: var(--cinza); }
+
+  .numero { font: 600 200px/1 'Cormorant Garamond', serif; font-variant-numeric: lining-nums; color: var(--dourado-tinta); margin-bottom: 20px; }
+  .frase h2 { font-size: 104px; }
+  .fecho { align-items: center; text-align: center; }
+  .fecho .marca { height: 150px; margin-bottom: 80px; }
+  .fecho p { margin-left: auto; margin-right: auto; }
+  .chamada { display: inline-block; margin-top: 64px; padding: 24px 52px; border: 2px solid var(--dourado); color: var(--dourado); font: 700 30px 'DM Sans'; letter-spacing: .2em; text-transform: uppercase; }
+
+  .rodape { position: absolute; bottom: 72px; left: 96px; right: 96px; font: 500 24px 'DM Sans'; letter-spacing: .2em; text-transform: uppercase; }
+  .escura .rodape { color: var(--dourado); }
+  .clara .rodape { color: var(--cinza); }
+
+  /* index.html#3 mostra só a lâmina 3, no tamanho exato: é assim que o exportar.sh fotografa cada uma. */
+  body.exportar { padding: 0; gap: 0; background: none; }
+  body.exportar .s { display: none; }
+  body.exportar .s.ativa { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- CAPA: escura, o logo no topo, a promessa em letra grande. Uma palavra de virada em <em>. -->
+<section class="s escura">
+  <div class="topo"><img src="logo-vr-concept.png" alt="VR Concept"><span class="pagina"></span></div>
+  <div class="fio"></div>
+  <div class="chapeu">Assunto do carrossel</div>
+  <h1>A frase que para<br>o <em>dedo</em> no feed.</h1>
+  <p>Uma linha que explica por que vale arrastar.</p>
+  <div class="rodape">Arraste →</div>
+</section>
+
+<!-- IDEIA: clara, um título e no máximo uma linha embaixo. -->
+<section class="s clara">
+  <div class="topo"><span>VR Concept</span><span class="pagina"></span></div>
+  <div class="fio"></div>
+  <h2>Uma ideia só<br>por <em>lâmina</em>.</h2>
+  <p>E uma linha de apoio, curta, que fecha o raciocínio.</p>
+</section>
+
+<!-- PASSO: clara, o número grande em dourado. Repita para cada passo. -->
+<section class="s clara">
+  <div class="topo"><span>VR Concept</span><span class="pagina"></span></div>
+  <div class="numero">1</div>
+  <h2>O nome do passo</h2>
+  <p>O que fazer, em uma frase que se lê no celular.</p>
+</section>
+
+<!-- FRASE: escura, a frase que alguém quer salvar ou mandar para outra pessoa. -->
+<section class="s escura frase">
+  <div class="topo"><span>VR Concept</span><span class="pagina"></span></div>
+  <div class="fio"></div>
+  <h2>A frase forte<br>do <em>carrossel</em>.</h2>
+</section>
+
+<!-- FECHO: escura, o logo grande no centro e a chamada. -->
+<section class="s escura fecho">
+  <img class="marca" src="logo-vr-concept.png" alt="VR Concept">
+  <h2>A ideia que fica<br>no <em>final</em>.</h2>
+  <p>Uma linha de apoio.</p>
+  <div class="chamada">A chamada</div>
+</section>
+
+<script>
+  const lâminas = document.querySelectorAll('.s');
+  lâminas.forEach((s, i) => {
+    const p = s.querySelector('.pagina');
+    if (p) p.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(lâminas.length).padStart(2, '0');
+  });
+  const n = parseInt(location.hash.slice(1));
+  if (n) { document.body.classList.add('exportar'); lâminas[n - 1]?.classList.add('ativa'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!doctype html>
+<!--
+  ============================================================================
+  TEMPLATE DE APRESENTAÇÃO PREMIUM · DESCOMPLIQUEI
+  ============================================================================
+  Base canônica de decks. Copie este arquivo e edite o conteúdo dos slides.
+  NÃO recrie o CSS/motor do zero — está tudo aqui e foi validado.
+
+  Cada <section class="slide ..."> abaixo é um COMPONENTE de exemplo. Veja
+  references/componentes.md para o catálogo com quando-usar de cada um.
+
+  Regras de ouro (ver SKILL.md "Filosofia"):
+   - Tela 16:9 composta, não conteúdo que rola.
+   - Preencha o quadro: painéis edge-to-edge + densidade. Nada de card flutuando no vazio.
+   - Tipo Plus Jakarta 700 (não 800/preto puro), com respiro.
+   - Laranja = acento OU painel estrutural inteiro. Nunca cardzinho saturado isolado.
+   - Cor forte (--grad-o/--grad-d) + cor fraca (--grad-soft) convivendo.
+   - Ritmo claro/escuro. Ícones SVG de linha (nunca emoji).
+
+  IMAGENS: screenshots -> moldura de navegador (.shotframe, respeita proporção larga).
+  Fotos de pessoas -> moldura de foto (.photoframe, retrato). Para inserir imagem real,
+  troque o placeholder .ph/.in por <img src="images/arquivo.png" alt="">.
+  ============================================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Apresentação · Descompliquei</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* ===== DESIGN SYSTEM (tokens) — ver references/design-system.md ===== */
+  :root{
+    --orange:#E85D24; --orange-2:#F5843D; --orange-deep:#C6431A;
+    --grad-o:linear-gradient(150deg,#F0743A 0%,#E85D24 48%,#BE3E17 100%);      /* cor FORTE */
+    --grad-soft:linear-gradient(155deg,#FCF4EC 0%,#F6E4D5 100%);               /* cor FRACA (creme) */
+    --grad-d:linear-gradient(155deg,#2C2820 0%,#1B1812 100%);                  /* escuro FORTE */
+    --tint:#FBEEE6; --tint-line:#EFD8C9;
+    --ink:#211E17; --ink-2:#514B41;                                            /* texto quente (NÃO preto) */
+    --paper:#FCFBF9; --warm:#F8F4EE; --card:#F5F1EC; --card-line:rgba(33,30,23,.08);
+    --muted:#7C766C; --muted-2:#ACA69B;
+    --line:rgba(33,30,23,.10); --line-d:rgba(255,255,255,.13);
+    --ff-d:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --ff-b:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --ff-m:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0b0a08}
+  body{font-family:var(--ff-b);display:flex;align-items:center;justify-content:center}
+
+  .stage{width:1280px;height:720px;position:relative;transform-origin:center center;border-radius:8px;overflow:hidden;box-shadow:0 40px 130px rgba(0,0,0,.55)}
+  .slide{position:absolute;inset:0;display:none;background:var(--paper);color:var(--ink)}
+  .slide.active{display:flex}
+  /* IMPORTANTE: não definir display em .split/.showcase — o flex vem de .slide.active.
+     Se uma classe de layout de mesma especificidade setar display, ela sobrepõe o
+     display:none e TODOS os slides aparecem empilhados. */
+
+  .eyebrow{font-family:var(--ff-m);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--orange);font-weight:500}
+  .on-dark .eyebrow{color:var(--orange-2)}
+  .accent{color:var(--orange)}
+  .pageno{position:absolute;bottom:26px;right:34px;font-family:var(--ff-m);font-size:11px;letter-spacing:.1em;color:var(--muted-2);z-index:8}
+  .pageno.on-dark{color:rgba(255,255,255,.4)}
+  .logo{display:flex;align-items:center;gap:9px}
+  .logo .mk{width:26px;height:26px;border-radius:7px;background:var(--grad-o);color:#fff;display:grid;place-items:center;font-family:var(--ff-d);font-weight:800;font-size:13px}
+  .logo .tx{font-family:var(--ff-m);font-size:10px;letter-spacing:.24em;color:var(--ink)}
+  .on-dark .logo .tx{color:rgba(255,255,255,.72)}
+  .waves{position:absolute;pointer-events:none}
+
+  /* ===== CAPA ===== */
+  .cover{background:var(--grad-d);color:#fff;flex-direction:column;justify-content:flex-end;padding:0}
+  .cover .waves{top:-30px;right:-20px;width:640px;height:360px;opacity:.6}
+  .cover .top{position:absolute;top:34px;left:44px;right:44px;display:flex;justify-content:space-between;align-items:center}
+  .cover .top .meta{font-family:var(--ff-m);font-size:10.5px;letter-spacing:.14em;color:rgba(255,255,255,.4)}
+  .cover .body{padding:0 64px 92px}
+  .cover .eyebrow{margin-bottom:20px}
+  .cover h1{font-family:var(--ff-d);font-weight:700;font-size:78px;line-height:1.0;letter-spacing:-.028em}
+  .cover h1 span{color:var(--orange-2)}
+  .cover .tag{margin-top:26px;font-size:16.5px;line-height:1.6;color:rgba(255,255,255,.6);max-width:44ch}
+  .cover .barline{position:absolute;left:0;bottom:0;width:100%;height:5px;background:var(--grad-o)}
+
+  /* ===== SPLIT (2 zonas) — base de vários slides ===== */
+  .split .side{width:41%;position:relative;overflow:hidden;padding:60px 50px;display:flex;flex-direction:column;justify-content:center}
+  .split .side.orange{background:var(--grad-o);color:#fff}
+  .split .side.dark{background:var(--grad-d);color:#fff}
+  .split .side.soft{background:var(--grad-soft);color:var(--ink)}
+  .split .side h2{font-family:var(--ff-d);font-weight:700;font-size:35px;line-height:1.14;letter-spacing:-.02em;margin-top:15px}
+  .split .side .intro{font-size:13.5px;line-height:1.66;margin-top:16px;max-width:34ch}
+  .split .side.orange .intro,.split .side.dark .intro{color:rgba(255,255,255,.72)}
+  .split .side.soft .intro{color:var(--muted)}
+  .split .side .tagpill{margin-top:24px;align-self:flex-start;font-family:var(--ff-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:7px 14px}
+  .split .side.soft .tagpill{background:#fff;border-color:var(--tint-line);color:var(--orange)}
+  .split .main{flex:1;padding:50px 54px;display:flex;flex-direction:column;justify-content:center;position:relative;background:var(--warm)}
+  .split .main.plain{background:var(--paper)}
+
+  /* stat rows */
+  .srow{display:flex;align-items:center;gap:24px;padding:24px 4px}
+  .srow + .srow{border-top:1px solid var(--line)}
+  .srow .num{font-family:var(--ff-d);font-weight:700;font-size:58px;line-height:.9;letter-spacing:-.03em;color:var(--ink);min-width:144px}
+  .srow.hi .num{color:var(--orange)}
+  .srow .num small{font-size:25px;font-weight:600;margin-left:2px}
+  .srow .tx .k{font-family:var(--ff-m);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-2);margin-bottom:6px}
+  .srow .tx .d{font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+
+  /* card stack (num painel forte) */
+  .cstack{display:flex;flex-direction:column;justify-content:center;height:100%}
+  .citem{padding:22px 0}
+  .citem + .citem{border-top:1px solid var(--line-d)}
+  .citem .k{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px}
+  .citem h4{font-family:var(--ff-d);font-weight:700;font-size:20px;color:#fff;margin-bottom:6px;letter-spacing:-.01em}
+  .citem p{font-size:12.8px;line-height:1.55;color:rgba(255,255,255,.66)}
+
+  /* checklist + nota itálico */
+  .checklist{margin-top:22px}
+  .cli{display:flex;align-items:center;gap:13px;padding:9px 0}
+  .cli .ck{width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;flex-shrink:0}
+  .cli span{font-family:var(--ff-d);font-weight:600;font-size:15px;color:var(--ink)}
+  .note{font-style:italic;font-size:13px;line-height:1.6;color:var(--muted);border-left:2px solid var(--orange);padding-left:14px;margin-top:24px;max-width:38ch}
+  .note.on-dark{color:rgba(255,255,255,.72)}
+
+  /* checklist.on-dark — variante de 2 linhas (título + descrição) para 4-8 itens curtos num
+     painel escuro. Ver componentes.md #4. NUNCA vire isso um grid de cards — já foi tentado
+     (.gridslide/.gcard) e destoou do resto do deck; ver SKILL.md "Lição aprendida". */
+  .checklist.wrap .cli{align-items:flex-start}
+  .checklist.wrap .cli .ck{margin-top:2px;width:23px;height:23px}
+  .checklist.wrap .cli span{font-family:var(--ff-b);font-weight:500;font-size:13.5px;line-height:1.52;color:var(--ink-2)}
+  .checklist.on-dark{margin-top:0}
+  .checklist.on-dark .cli{padding:10px 0}
+  .checklist.on-dark .cli + .cli{border-top:1px solid var(--line-d)}
+  .checklist.on-dark .cli .ck{background:var(--orange-2)}
+  .checklist.on-dark .cli .tt{font-family:var(--ff-d);font-weight:700;font-size:15px;color:#fff;display:block}
+  .checklist.on-dark .cli .dd{font-family:var(--ff-b);font-weight:400;font-size:12.5px;line-height:1.48;color:rgba(255,255,255,.6);display:block;margin-top:3px}
+
+  /* moldura de foto (retrato) */
+  .photoframe{position:relative;width:100%;height:100%}
+  .photoframe .accent{position:absolute;left:2px;bottom:6px;width:76%;height:80%;background:var(--grad-o);border-radius:20px}
+  .photoframe .ph{position:absolute;top:0;right:0;width:88%;height:90%;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,#33302A,#201D17);box-shadow:0 24px 60px -18px rgba(0,0,0,.45);display:grid;place-items:center;color:rgba(255,255,255,.5)}
+  .photoframe .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .photoframe .ph .in{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .photoframe .ph .ic{width:54px;height:54px;border-radius:15px;background:rgba(255,255,255,.08);display:grid;place-items:center}
+  .photoframe .ph .lb{font-family:var(--ff-m);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+
+  /* showcase (screenshot em moldura de navegador) */
+  .showcase{align-items:center}
+  .showcase.on-dark{background:var(--grad-d);color:#fff}
+  .showcase .waves{top:-20px;right:-20px;width:520px;height:320px;opacity:.4}
+  .showcase .sc-left{width:35%;padding:0 26px 0 64px;position:relative;z-index:2}
+  .showcase .sc-left h2{font-family:var(--ff-d);font-weight:700;font-size:33px;line-height:1.16;letter-spacing:-.02em;margin-top:15px}
+  .showcase .sc-left .intro{font-size:13.5px;line-height:1.66;margin-top:16px;max-width:32ch}
+  .showcase.on-dark .sc-left .intro{color:rgba(255,255,255,.68)}
+  .showcase:not(.on-dark) .sc-left .intro{color:var(--muted)}
+  .showcase .sc-left .tagpill{display:inline-block;margin-top:22px;font-family:var(--ff-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;border-radius:99px;padding:7px 14px}
+  .showcase.on-dark .sc-left .tagpill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);color:#fff}
+  .showcase:not(.on-dark) .sc-left .tagpill{background:#fff;border:1px solid var(--tint-line);color:var(--orange)}
+  .showcase .sc-right{flex:1;padding:0 58px 0 24px;position:relative;z-index:1}
+  .framed{position:relative}
+  .framed .accent{position:absolute;right:-14px;bottom:-16px;width:52%;height:66%;background:var(--grad-o);border-radius:18px;z-index:0}
+  .shotframe{position:relative;z-index:1;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 30px 74px -22px rgba(0,0,0,.5)}
+  .showcase:not(.on-dark) .shotframe{border:1px solid rgba(33,30,23,.10)}
+  .showcase.on-dark .shotframe{border:1px solid rgba(255,255,255,.14)}
+  .shotframe .bar{height:32px;background:#EFEAE3;display:flex;align-items:center;gap:6px;padding:0 13px;border-bottom:1px solid rgba(33,30,23,.08)}
+  .shotframe .bar i{width:9px;height:9px;border-radius:50%;background:#D6CFC4}
+  .shotframe .bar .url{margin-left:12px;flex:1;max-width:78%;height:19px;background:#fff;border:1px solid rgba(33,30,23,.06);border-radius:5px;display:flex;align-items:center;padding:0 11px;font-family:var(--ff-m);font-size:8.5px;color:var(--muted-2)}
+  .shotframe .shot img{width:100%;height:auto;display:block}
+  .shotframe .shot .ph{aspect-ratio:16/9;background:linear-gradient(160deg,#FBFAF8,#EEE9E1);display:grid;place-items:center;color:var(--muted-2)}
+  .shotframe .shot .ph .in{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .shotframe .shot .ph .ic{width:50px;height:50px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--orange)}
+  .shotframe .shot .ph .lb{font-family:var(--ff-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+
+  /* cases list + hero */
+  .rrow{padding:18px 0;border-bottom:1px solid var(--line)}
+  .rrow:last-child{border-bottom:none}
+  .rrow .rt{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .rrow .nm{font-family:var(--ff-d);font-weight:600;font-size:16px;color:var(--ink)}
+  .rrow .nm span{font-family:var(--ff-b);font-weight:400;font-size:11.5px;color:var(--muted-2);margin-left:9px}
+  .rrow .delta{font-family:var(--ff-d);font-weight:700;font-size:16px;color:var(--orange)}
+  .rrow .bar{height:6px;border-radius:99px;background:#ECE6DE;overflow:hidden}
+  .rrow .bar i{display:block;height:100%;background:var(--grad-o);border-radius:99px}
+  /* .rrow em painel escuro (dentro de .side.dark) — mesma peça, cores invertidas p/ contraste.
+     Componente 7 (Cases) usa .side.soft + .side.dark, NUNCA .side.dark + .main.plain — ver
+     componentes.md #7 "Nota de convenção" e SKILL.md "Lição aprendida". */
+  .side.dark .rrow{border-bottom:1px solid var(--line-d)}
+  .side.dark .rrow .nm{color:#fff}
+  .side.dark .rrow .nm span{color:rgba(255,255,255,.5)}
+  .side.dark .rrow .delta{color:var(--orange-2)}
+  .side.dark .rrow .bar{background:rgba(255,255,255,.14)}
+  .split .side .hero{font-family:var(--ff-d);font-weight:700;font-size:72px;line-height:.88;letter-spacing:-.03em;color:var(--orange-2);margin-top:22px}
+  .split .side .hlb{font-size:13px;color:rgba(255,255,255,.58);margin-top:10px;max-width:22ch;line-height:1.5}
+  .split .side.soft .hero{color:var(--orange)}
+  .split .side.soft .hlb{color:var(--muted)}
+
+  /* section divider / citação de impacto (dark, centralizado) */
+  .divider{background:var(--grad-d);color:#fff;align-items:center;justify-content:center;text-align:center}
+  .divider .in{max-width:24ch}
+  .divider .waves{bottom:-40px;left:-30px;width:520px;height:300px;opacity:.4}
+  .divider h2{font-family:var(--ff-d);font-weight:700;font-size:44px;line-height:1.12;letter-spacing:-.02em;margin-top:16px}
+  .divider .sub{font-size:15px;color:rgba(255,255,255,.6);margin-top:18px;line-height:1.6}
+
+  /* nav */
+  .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99;display:flex;align-items:center;gap:6px;background:rgba(20,19,16,.85);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:6px 8px}
+  .nav button{width:33px;height:33px;border:none;border-radius:99px;background:rgba(255,255,255,.09);color:#fff;cursor:pointer;display:grid;place-items:center;transition:.15s;font-size:15px}
+  .nav button:hover{background:var(--orange)}
+  .nav .ct{font-family:var(--ff-m);font-size:12px;color:rgba(255,255,255,.82);padding:0 10px;min-width:52px;text-align:center}
+  .nav .fs{width:auto;padding:0 14px;font-family:var(--ff-b);font-size:12px;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ===== COMPONENTE: CAPA ===== -->
+  <section class="slide cover on-dark active">
+    <svg class="waves" viewBox="0 0 640 360" fill="none" preserveAspectRatio="xMaxYMin meet">
+      <path d="M-40 270 C 160 150, 340 260, 680 50" stroke="rgba(245,132,61,.5)" stroke-width="1.3"/>
+      <path d="M-40 310 C 180 200, 360 300, 680 95" stroke="rgba(245,132,61,.3)" stroke-width="1.3"/>
+      <path d="M0 350 C 210 240, 390 330, 700 140" stroke="rgba(245,132,61,.18)" stroke-width="1.3"/>
+      <path d="M40 390 C 250 280, 430 370, 720 185" stroke="rgba(245,132,61,.1)" stroke-width="1.3"/>
+    </svg>
+    <div class="top"><div class="logo"><span class="mk">D</span><span class="tx">DESCOMPLIQUEI</span></div><div class="meta">Reunião Estratégica · Confidencial</div></div>
+    <div class="body">
+      <div class="eyebrow">Apresentação Comercial · PCA</div>
+      <h1>Título grande<br>em dois <span>tons</span></h1>
+      <div class="tag">Uma linha de apoio que resume a promessa central em benefício, não em features.</div>
+    </div>
+    <div class="barline"></div>
+  </section>
+
+  <!-- ===== COMPONENTE: STAT (painel FORTE laranja + stat rows) ===== -->
+  <section class="slide split">
+    <div class="side orange on-dark">
+      <div class="eyebrow">Categoria · Contexto</div>
+      <h2>Headline de resultado que ancora os números ao lado.</h2>
+      <div class="intro">Uma frase de apoio que dá o "porquê" antes dos dados aparecerem à direita.</div>
+      <div class="tagpill">Pílula de reforço</div>
+    </div>
+    <div class="main plain">
+      <div class="srow hi"><div class="num">9<small>x</small></div><div class="tx"><div class="k">Rótulo curto</div><div class="d">Descrição de uma linha do que este número significa para o cliente.</div></div></div>
+      <div class="srow"><div class="num">90<small>%</small></div><div class="tx"><div class="k">Rótulo curto</div><div class="d">Descrição de uma linha do que este número significa para o cliente.</div></div></div>
+      <div class="srow"><div class="num">24<small>h</small></div><div class="tx"><div class="k">Rótulo curto</div><div class="d">Descrição de uma linha do que este número significa para o cliente.</div></div></div>
+    </div>
+    <div class="pageno">02</div>
+  </section>
+
+  <!-- ===== COMPONENTE: FRACA + FORTE (painel creme + painel escuro com card stack) ===== -->
+  <section class="slide split">
+    <div class="side soft">
+      <div class="eyebrow">Seção</div>
+      <h2>Título à esquerda no painel de cor fraca (creme).</h2>
+      <div class="intro">Texto introdutório que prepara os itens do painel forte ao lado.</div>
+      <div class="tagpill">Reforço</div>
+    </div>
+    <div class="side dark on-dark" style="width:59%;padding:56px 58px">
+      <svg class="waves" viewBox="0 0 460 320" fill="none" preserveAspectRatio="xMaxYMin meet" style="top:-20px;right:-20px;width:460px;height:320px;opacity:.4">
+        <path d="M-20 210 C 130 120, 260 190, 490 60" stroke="rgba(245,132,61,.4)" stroke-width="1.2"/>
+        <path d="M-20 250 C 150 160, 280 230, 490 100" stroke="rgba(245,132,61,.22)" stroke-width="1.2"/>
+      </svg>
+      <div class="cstack">
+        <div class="citem"><div class="k">Item 01</div><h4>Título do item</h4><p>Descrição de duas linhas do item, no painel forte, com texto branco suave.</p></div>
+        <div class="citem"><div class="k">Item 02</div><h4>Título do item</h4><p>Descrição de duas linhas do item, no painel forte, com texto branco suave.</p></div>
+        <div class="citem"><div class="k">Item 03</div><h4>Título do item</h4><p>Descrição de duas linhas do item, no painel forte, com texto branco suave.</p></div>
+      </div>
+    </div>
+    <div class="pageno on-dark">03</div>
+  </section>
+
+  <!-- ===== COMPONENTE: CHECKLIST + NOTA + MOLDURA DE FOTO ===== -->
+  <section class="slide split">
+    <div class="side soft" style="width:52%;padding:60px 56px">
+      <div class="eyebrow">Como funciona</div>
+      <h2>Título com <span class="accent">palavra em acento.</span></h2>
+      <div class="intro">Introdução curta que contextualiza a lista de checks abaixo.</div>
+      <div class="checklist">
+        <div class="cli"><span class="ck"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Item de checklist número um</span></div>
+        <div class="cli"><span class="ck"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Item de checklist número dois</span></div>
+        <div class="cli"><span class="ck"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Item de checklist número três</span></div>
+        <div class="cli"><span class="ck"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Item de checklist número quatro</span></div>
+      </div>
+      <div class="note">"Uma citação/nota em itálico que fecha o argumento com uma frase de impacto."</div>
+    </div>
+    <div class="side plain" style="width:48%;background:var(--warm);padding:52px 52px">
+      <!-- MOLDURA DE FOTO (retrato): para foto real, troque .in por <img src="images/pessoa.jpg" alt=""> -->
+      <div class="photoframe">
+        <div class="accent"></div>
+        <div class="ph">
+          <div class="in"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="lb">Espaço para foto</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pageno on-dark">04</div>
+  </section>
+
+  <!-- ===== COMPONENTE: SHOWCASE claro (screenshot em moldura de navegador) ===== -->
+  <section class="slide showcase">
+    <div class="logo" style="position:absolute;top:34px;left:44px"><span class="mk">D</span><span class="tx">DESCOMPLIQUEI</span></div>
+    <div class="sc-left">
+      <div class="eyebrow">Produto · Tela</div>
+      <h2>Headline de benefício da <span class="accent">tela.</span></h2>
+      <div class="intro">Uma frase que diz o que essa tela resolve — não o que ela tem.</div>
+      <div class="tagpill">Reforço</div>
+    </div>
+    <div class="sc-right">
+      <!-- Para screenshot real, troque .ph por <img src="images/plataforma-tela.png" alt=""> -->
+      <div class="framed">
+        <div class="accent"></div>
+        <div class="shotframe">
+          <div class="bar"><i></i><i></i><i></i><div class="url">app.descompliquei.com/rota</div></div>
+          <div class="shot"><div class="ph"><div class="in"><span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="lb">Screenshot da plataforma</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pageno">05</div>
+  </section>
+
+  <!-- ===== COMPONENTE: SHOWCASE escuro (mesmo componente, ritmo dark) ===== -->
+  <section class="slide showcase on-dark">
+    <svg class="waves" viewBox="0 0 520 320" fill="none" preserveAspectRatio="xMaxYMin meet">
+      <path d="M-20 210 C 140 120, 280 190, 540 60" stroke="rgba(245,132,61,.34)" stroke-width="1.2"/>
+      <path d="M-20 250 C 160 160, 300 230, 540 100" stroke="rgba(245,132,61,.2)" stroke-width="1.2"/>
+    </svg>
+    <div class="logo" style="position:absolute;top:34px;left:44px"><span class="mk">D</span><span class="tx">DESCOMPLIQUEI</span></div>
+    <div class="sc-left">
+      <div class="eyebrow">Produto · Tela</div>
+      <h2>Outra tela, no <span class="accent">escuro.</span></h2>
+      <div class="intro">A mesma moldura em fundo escuro dá contraste e cadência ao deck.</div>
+      <div class="tagpill">Reforço</div>
+    </div>
+    <div class="sc-right">
+      <div class="framed">
+        <div class="accent"></div>
+        <div class="shotframe">
+          <div class="bar"><i></i><i></i><i></i><div class="url">app.descompliquei.com/rota</div></div>
+          <div class="shot"><div class="ph"><div class="in"><span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="lb">Screenshot da plataforma</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pageno on-dark">06</div>
+  </section>
+
+  <!-- ===== COMPONENTE: DIVISÓRIA / CITAÇÃO DE IMPACTO ===== -->
+  <section class="slide divider on-dark">
+    <svg class="waves" viewBox="0 0 520 300" fill="none" preserveAspectRatio="xMinYMax meet">
+      <path d="M-20 200 C 140 120, 280 190, 540 60" stroke="rgba(245,132,61,.32)" stroke-width="1.2"/>
+      <path d="M-20 240 C 160 160, 300 230, 540 100" stroke="rgba(245,132,61,.18)" stroke-width="1.2"/>
+    </svg>
+    <div class="in">
+      <div class="eyebrow">Transição</div>
+      <h2>Uma frase forte que <span class="accent">vira a chave</span> da narrativa.</h2>
+      <div class="sub">Linha de apoio opcional embaixo.</div>
+    </div>
+    <div class="pageno on-dark">07</div>
+  </section>
+
+  <!-- ===== COMPONENTE: CASES (creme + escuro, lista com barras — ver componentes.md #7) ===== -->
+  <!-- Segue a MESMA convenção soft-esquerda/dark-direita de todo o resto do deck. NÃO inverter
+       para dark-esquerda + .main.plain claro — já foi tentado e destoou do resto do deck (ver
+       SKILL.md "Lição aprendida"). -->
+  <section class="slide split">
+    <div class="side soft" style="width:44%">
+      <div class="eyebrow">Resultados Reais</div>
+      <h2>Título que enquadra a <span class="accent">prova social.</span></h2>
+      <div class="hero">+R$700K</div>
+      <div class="hlb">legenda curta do número-herói</div>
+    </div>
+    <div class="side dark on-dark" style="width:56%;padding:50px 56px">
+      <svg class="waves" viewBox="0 0 460 320" fill="none" preserveAspectRatio="xMaxYMin meet" style="top:-20px;right:-20px;width:460px;height:320px;opacity:.4">
+        <path d="M-20 210 C 130 120, 260 190, 490 60" stroke="rgba(245,132,61,.4)" stroke-width="1.2"/>
+        <path d="M-20 250 C 150 160, 280 230, 490 100" stroke="rgba(245,132,61,.22)" stroke-width="1.2"/>
+      </svg>
+      <div class="cstack">
+        <div class="rrow"><div class="rt"><div class="nm">Nome do case<span>rótulo · período</span></div><div class="delta">R$X → R$Y</div></div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="rrow"><div class="rt"><div class="nm">Nome do case<span>rótulo · período</span></div><div class="delta">R$X → R$Y</div></div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="rrow"><div class="rt"><div class="nm">Nome do case<span>rótulo · período</span></div><div class="delta">R$X → R$Y</div></div><div class="bar"><i style="width:74%"></i></div></div>
+        <div class="rrow"><div class="rt"><div class="nm">Nome do case<span>rótulo · período</span></div><div class="delta">R$X → R$Y</div></div><div class="bar"><i style="width:62%"></i></div></div>
+      </div>
+    </div>
+    <div class="pageno on-dark">08</div>
+  </section>
+
+  <!-- ===== COMPONENTE: CHECKLIST.ON-DARK (4-8 itens curtos num painel escuro — ver componentes.md #4) ===== -->
+  <!-- Para listas de 4-8 itens que não cabem com respiro num .cstack (~3 itens). NÃO vire isso um
+       grid de cards — já foi tentado e destoou do resto do deck (ver SKILL.md "Lição aprendida").
+       Continua sendo .checklist (mesma peça do componente 4), só que dentro de um .side.dark,
+       com item de 2 linhas via .tt (título) + .dd (descrição). -->
+  <section class="slide split">
+    <div class="side soft" style="width:44%">
+      <div class="eyebrow">Categoria</div>
+      <h2>Título curto que enquadra a <span class="accent">lista de itens.</span></h2>
+      <div class="intro">Frase de apoio opcional.</div>
+    </div>
+    <div class="side dark on-dark" style="width:56%;padding:44px 56px">
+      <div class="checklist wrap on-dark">
+        <div class="cli"><span class="ck"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="tt">Título do item</span><span class="dd">Descrição curta de uma linha.</span></span></div>
+        <div class="cli"><span class="ck"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="tt">Título do item</span><span class="dd">Descrição curta de uma linha.</span></span></div>
+        <div class="cli"><span class="ck"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="tt">Título do item</span><span class="dd">Descrição curta de uma linha.</span></span></div>
+        <div class="cli"><span class="ck"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="tt">Título do item</span><span class="dd">Descrição curta de uma linha.</span></span></div>
+      </div>
+    </div>
+    <div class="pageno on-dark">09</div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <span class="ct" id="ct">1 / 9</span>
+  <button id="next" aria-label="Próximo">›</button>
+  <button class="fs" id="fs">Tela cheia</button>
+</div>
+
+<script>
+  /* Motor: conta .slide sozinho — adicionar/remover slides é seguro. */
+  const stage = document.getElementById('stage');
+  function scale(){ const s = Math.min(window.innerWidth/1280, window.innerHeight/720) * 0.94; stage.style.transform = `scale(${s})`; }
+  window.addEventListener('resize', scale); scale();
+  const slides = [...document.querySelectorAll('.slide')];
+  let cur = 0;
+  function show(i){ cur = Math.max(0, Math.min(slides.length-1, i)); slides.forEach((s,idx)=>s.classList.toggle('active', idx===cur)); document.getElementById('ct').textContent = (cur+1)+' / '+slides.length; }
+  document.getElementById('next').onclick = ()=>show(cur+1);
+  document.getElementById('prev').onclick = ()=>show(cur-1);
+  document.addEventListener('keydown', e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();show(cur+1);}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();show(cur-1);}
+    else if(e.key==='Home')show(0); else if(e.key==='End')show(slides.length-1);
+    else if(e.key.toLowerCase()==='f')toggleFs();
+  });
+  function toggleFs(){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+  document.getElementById('fs').onclick = toggleFs;
+  show(0);
+</script>
+</body>
+</html>

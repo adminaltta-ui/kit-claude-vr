@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Molde do estático de anúncio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+/* O molde dos anúncios de imagem da Altta (skill criativo-estatico). Cinco tipos e três proporções.
+   O tipo é a classe da <section>: .texto .carta .oferta .print .cinema (e .claro para o fundo pergaminho).
+   A proporção também: .r916 (1080x1920, Reels e Stories) .r45 (1080x1350, feed) .r11 (1080x1080).
+   Todo texto mora dentro da .zona, a área segura: no 9:16 ela deixa livres os 14% de cima e os 35% de baixo,
+   que a interface do Reels cobre. Se o texto não couber, o script do fim diminui a letra do que tem .encaixa.
+   Cada <section> leva data-nome com o nome do criativo e a proporção: o exportador salva o JPEG com ele. */
+:root{--floresta:#10241C;--pinho:#1C4034;--perg:#EDE6D8;--ouro:#C9A227;--ouro-claro:#D9BC6A;--fundo:#0b1c15}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050b08;display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;padding:40px;font-family:Inter,sans-serif}
+.s{position:relative;width:1080px;overflow:hidden;color:#F3EEE3;background:var(--fundo)}
+.r916{height:1920px} .r45{height:1350px} .r11{height:1080px}
+.s > *{position:absolute}
+.zona{left:80px;right:80px;top:80px;bottom:80px;display:flex;flex-direction:column;z-index:2;overflow:hidden}
+.r916 .zona{left:70px;right:70px;top:270px;bottom:670px}
+.caps{font-weight:500;letter-spacing:.38em;text-transform:uppercase;font-size:24px}
+.it{font-family:Fraunces,serif;font-style:italic;font-weight:300}
+.ouro{color:var(--ouro-claro)}
+.s{--fenda:#0f261d}
+.selo{display:flex;align-items:center;gap:14px;font-size:20px;letter-spacing:.5em;opacity:.85}
+.selo svg{width:42px;height:26px}
+.claro{background:var(--perg);color:var(--floresta);--fenda:var(--perg)}
+.claro .ouro{color:#9a7a12}
+.marca{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:26px;opacity:.8}
+
+/* .texto: a frase sozinha, grande. O primeiro teste de todo ângulo. */
+.texto .frase{margin:auto 0;font-family:Fraunces,serif;font-weight:300;font-size:96px;line-height:1.04;letter-spacing:-.02em}
+.texto .frase em{font-style:italic;color:var(--ouro-claro)}
+.claro.texto .frase em{color:#9a7a12}
+.texto .apoio{font-size:36px;line-height:1.35;opacity:.85;margin-bottom:40px;max-width:880px}
+
+/* .carta: texto longo, de uma pessoa real, assinado. Fundo pergaminho por padrão. */
+.carta{background:var(--perg);color:var(--floresta);--fenda:var(--perg)}
+.carta .para{margin-top:48px;letter-spacing:.2em;line-height:1.4}
+.carta .corpo{margin-top:36px;font-family:Fraunces,serif;font-weight:300;font-size:42px;line-height:1.32}
+.carta .corpo p + p{margin-top:24px}
+.carta .assina{margin-top:40px;font-size:28px}
+.carta .assina b{display:block;font-family:Fraunces,serif;font-style:italic;font-weight:400;font-size:46px;margin-bottom:4px}
+
+/* .oferta: a oferta primeiro. O curso, o que leva, o preço na tela. */
+.oferta .chapeu{margin-top:40px}
+.oferta h1{margin-top:20px;font-family:Fraunces,serif;font-weight:400;font-size:88px;line-height:1;letter-spacing:-.025em}
+.oferta ul{list-style:none;margin-top:40px;font-size:36px;line-height:1.3}
+.oferta li{padding-left:44px;position:relative;margin-top:16px}
+.oferta li::before{content:"";position:absolute;left:0;top:.5em;width:22px;height:2px;background:var(--ouro)}
+.claro li::before{background:#9a7a12}
+.oferta .conta{margin-top:32px;font-family:Fraunces,serif;font-style:italic;font-weight:300;font-size:44px;line-height:1.2;color:var(--ouro-claro)}
+.claro .conta{color:#9a7a12}
+.oferta .preco{margin-top:auto;display:flex;align-items:baseline;gap:20px}
+.oferta .preco b{font-family:Fraunces,serif;font-weight:400;font-size:150px;line-height:.9;letter-spacing:-.03em}
+.oferta .preco span{font-size:32px;opacity:.85}
+.oferta .chamada{margin-top:28px;align-self:flex-start;background:var(--ouro);color:var(--floresta);font-weight:600;font-size:38px;padding:16px 30px 18px;border-radius:14px}
+
+/* .print: o print real (a tela do curso, a conversa anonimizada) dentro do celular, com a frase em cima. */
+.print .frase{margin-top:40px;font-family:Fraunces,serif;font-weight:300;font-size:64px;line-height:1.08;letter-spacing:-.015em}
+.print .frase em{font-style:italic;color:var(--ouro-claro)}
+.print .celular{margin:40px auto 0;flex:1;min-height:0;aspect-ratio:9/19;border:14px solid #050b08;border-radius:56px;overflow:hidden;background:#fff;box-shadow:0 30px 80px #0008}
+.print .celular img{width:100%;height:100%;object-fit:cover;object-position:top}
+
+/* .cinema: a capa de cinema por IA. Cena de objeto, nunca rosto sintético (arquitetura 1.1 e 1.4). */
+.cinema .foto{inset:0;background-size:cover;background-position:center;z-index:0}
+.cinema .veu{inset:0;z-index:1;background:linear-gradient(0deg,var(--fundo) 0%,#0b1c15ee 30%,#0b1c1580 50%,#0b1c1500 66%),linear-gradient(180deg,#0b1c15b3 0%,#0b1c1500 18%)}
+.cinema .bloco{margin-top:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
+.cinema .chapeu{font-weight:600;font-size:44px;text-shadow:0 4px 24px var(--fundo)}
+.cinema h1{margin-top:10px;max-width:100%;white-space:nowrap;font-family:Fraunces,serif;font-weight:400;font-size:150px;line-height:.9;letter-spacing:-.035em;text-transform:uppercase;text-shadow:0 10px 50px #0b1c15cc}
+.cinema .pilula{margin-top:28px;background:var(--ouro);color:var(--floresta);font-weight:600;font-size:40px;line-height:1;padding:16px 30px 18px;border-radius:14px}
+.cinema .apoio{margin-top:24px;font-size:32px;line-height:1.3;opacity:.85;text-shadow:0 4px 24px var(--fundo)}
+.cinema .selo{align-self:center}
+</style>
+</head>
+<body>
+<svg style="display:none">
+  <!-- As montanhas pegam a cor do texto (currentColor) e a fenda a do fundo (--fenda): a mesma Fenda serve ao fundo escuro e ao claro. -->
+  <symbol id="montes" viewBox="14 36 92 54"><path d="M16 88 L38 54 L54 70 L70 38 L104 88 Z" fill="currentColor"/><path d="M70 38 L65 88 L58 88 Z" style="fill:var(--fenda)"/></symbol>
+</svg>
+
+<!-- .texto: a frase grande. Uma palavra-chave em <em> (ouro). Acrescente .claro para o fundo pergaminho. -->
+<section class="s texto r45" data-nome="[ALT_..._V01]_45">
+  <div class="zona">
+    <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+    <p class="frase encaixa">[A frase do gancho, com a <em>palavra que pesa</em>.]</p>
+    <p class="apoio encaixa">[Uma linha de apoio: o que o clique entrega.]</p>
+    <!-- o rodapé é opcional: o curso e, se a leva pedir, o preço -->
+    <div class="marca"><span>[Altta Academy · Nome do curso]</span></div>
+  </div>
+</section>
+
+<!-- .carta: só com texto aprovado por quem assina. -->
+<section class="s carta r45" data-nome="[ALT_..._V01]_45">
+  <div class="zona">
+    <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+    <p class="para caps">[Para quem ...]</p>
+    <div class="corpo encaixa"><p>[Primeiro parágrafo.]</p><p>[Segundo parágrafo.]</p></div>
+    <p class="assina"><b>[Nome]</b>[o papel na Altta]</p>
+  </div>
+</section>
+
+<!-- .oferta: o preço é o aprovado (PLANO-ESCOLA-DE-CURSOS §10). Nada de "de R$ X por R$ Y" sem preço cheio real. -->
+<section class="s oferta r45" data-nome="[ALT_..._V01]_45">
+  <div class="zona">
+    <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+    <p class="chapeu caps ouro">[Curso do Altta Academy]</p>
+    <h1 class="encaixa">[Nome do curso]</h1>
+    <ul class="encaixa"><li>[O que a pessoa sai com, 1]</li><li>[2]</li><li>[3]</li></ul>
+    <!-- opcional: a conta em uma linha ("um tratamento fechado a mais paga o curso"), sem número de faturamento -->
+    <p class="conta encaixa">[A conta, opcional]</p>
+    <div class="preco"><b>[R$ 67]</b><span>[acesso de 12 meses]</span></div>
+    <p class="chamada">[A chamada]</p>
+  </div>
+</section>
+
+<!-- .print: a imagem é um print REAL, com nome, telefone e foto de terceiros cobertos. -->
+<section class="s print r916" data-nome="[ALT_..._V01]_916">
+  <div class="zona">
+    <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+    <p class="frase encaixa">[A frase, com a <em>palavra que pesa</em>.]</p>
+    <div class="celular"><img src="fotos/[print].png" alt=""></div>
+  </div>
+</section>
+
+<!-- .cinema: imagem de IA (conteudo-carrossel/imagem.mjs), cena de objeto, sem rosto. -->
+<section class="s cinema r916" data-nome="[ALT_..._V01]_916">
+  <div class="foto" style="background-image:url(fotos/[imagem].jpg)"></div>
+  <div class="veu"></div>
+  <div class="zona">
+    <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+    <div class="bloco">
+      <p class="chapeu">[A linha curta de cima]</p>
+      <h1 class="encaixa">[Duas ou três palavras]</h1>
+      <p class="pilula">[O resto da frase]</p>
+      <!-- opcional: o que o clique entrega -->
+      <p class="apoio encaixa">[Linha de apoio, opcional]</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// Se a zona transborda, diminui a letra do que tem .encaixa até caber (nunca abaixo de 60% do tamanho).
+document.fonts.ready.then(() => document.querySelectorAll(".zona").forEach((z) => {
+  const els = [...z.querySelectorAll(".encaixa")];
+  const base = els.map((e) => parseFloat(getComputedStyle(e).fontSize));
+  for (let k = 1; k > 0.6 && (z.scrollHeight > z.clientHeight + 1 || els.some((e) => e.scrollWidth > e.clientWidth + 1)); k -= 0.04)
+    els.forEach((e, i) => (e.style.fontSize = base[i] * k + "px"));
+}));
+</script>
+</body>
+</html>

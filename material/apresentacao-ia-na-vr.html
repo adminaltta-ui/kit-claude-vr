@@ -1,0 +1,1181 @@
+<title>IA na VR Concept</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Página de vendas em faixas: grafite e papel se alternando; o dourado da VR só marca o que importa */
+:root{
+  --noite:#1A1A19; --grafite:#252525; --grafite-2:#2E2E2D; --grafite-3:#3A3A38;
+  --papel:#F6F6F3; --branco:#FFFFFF; --linha-clara:#E2E1DC;
+  --tinta:#232323; --tinta-suave:#5D5D59; --nevoa:#B3B2AC; --neve:#F1F0EB;
+  --ouro:#E7B84E; --ouro-texto:#86621A; --ouro-vidro:rgba(231,184,78,.14);
+  --vermelho:#C2533F;
+  --f-display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --f-texto:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --raio:14px;
+  color-scheme:light;
+}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--papel);color:var(--tinta);font-family:var(--f-texto);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--noite)}
+*{box-sizing:border-box}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:6px}
+
+.faixa{padding-block:clamp(64px,9vw,120px);background:var(--papel);color:var(--tinta)}
+.faixa.escura{background:var(--grafite);color:var(--neve)}
+.faixa.noite{background:var(--noite);color:var(--neve)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.pilha{display:flex;flex-direction:column;gap:20px}
+
+.kicker{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro-texto);font-weight:500}
+.escura .kicker,.noite .kicker{color:var(--ouro)}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+h1{font-size:clamp(40px,6.6vw,86px);line-height:1.0;letter-spacing:-.035em;font-weight:700}
+h2{font-size:clamp(30px,4.3vw,54px);line-height:1.06;letter-spacing:-.025em;font-weight:700;max-width:22ch}
+h3{font-size:21px;line-height:1.25;letter-spacing:-.01em;font-weight:600}
+p{margin:0}
+.lead{font-size:clamp(18px,1.7vw,21px);line-height:1.55;max-width:62ch;color:var(--tinta-suave)}
+.escura .lead,.noite .lead{color:var(--nevoa)}
+.suave{color:var(--tinta-suave)}
+.escura .suave,.noite .suave{color:var(--nevoa)}
+em.ouro{font-style:normal;color:var(--ouro)}
+.marca{background:linear-gradient(transparent 62%,var(--ouro-vidro) 62%);padding:0 2px}
+
+.grade{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.card{background:var(--branco);border:1px solid var(--linha-clara);border-radius:var(--raio);padding:24px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.escura .card,.noite .card{background:var(--grafite-2);border-color:var(--grafite-3)}
+.card p{color:var(--tinta-suave);font-size:16px}
+.escura .card p,.noite .card p{color:var(--nevoa)}
+.rot{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave)}
+.escura .rot,.noite .rot{color:var(--nevoa)}
+.codigo{font-family:var(--f-mono);font-size:14px;line-height:1.65;background:var(--noite);color:#ECEAE3;border:1px solid var(--grafite-3);border-radius:12px;padding:20px 22px;margin:0;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.codigo .c{color:#8F8E88}
+.codigo .k{color:var(--ouro)}
+.analogia{border-left:2px solid var(--ouro);padding:6px 0 6px 22px;font-size:clamp(18px,1.8vw,22px);line-height:1.5;max-width:60ch;font-family:var(--f-display);font-weight:400;letter-spacing:-.005em}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid transparent;background:var(--ouro);color:var(--noite);font-weight:600;border-radius:999px;padding:12px 22px;text-decoration:none;font-size:16px}
+.btn:hover{filter:brightness(1.05)}
+.btn.sec{background:transparent;border-color:currentColor;color:inherit}
+.acoes{display:flex;flex-wrap:wrap;gap:12px}
+.cab{display:flex;flex-direction:column;gap:18px;margin-bottom:clamp(36px,5vw,56px)}
+
+/* HERO */
+.hero{padding-block:clamp(40px,6vw,72px) clamp(64px,9vw,110px)}
+.topo{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:clamp(48px,8vw,96px);font-family:var(--f-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--nevoa)}
+.topo b{color:var(--neve);font-weight:500}
+.hero-grade{display:grid;grid-template-columns:1.35fr .9fr;gap:clamp(32px,5vw,72px);align-items:end}
+.hero-grade>*{min-width:0}
+.hero .lead{margin-top:24px}
+.hero .acoes{margin-top:32px}
+.agenda{background:var(--grafite);border:1px solid var(--grafite-3);border-radius:18px;padding:26px}
+.agenda ol{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column}
+.agenda li a{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:13px 0;border-top:1px solid var(--grafite-3);text-decoration:none}
+.agenda li:first-child a{border-top:0}
+.agenda li a:hover b{color:var(--ouro)}
+.agenda .n{font-family:var(--f-mono);font-size:13px;color:var(--ouro);padding-top:3px}
+.agenda b{font-weight:600;display:block;transition:color .15s}
+.agenda span.d{font-size:14.5px;color:var(--nevoa)}
+
+/* ESCADA */
+.escada{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
+.degrau{text-align:left;border:1px solid var(--linha-clara);background:var(--branco);border-radius:var(--raio);padding:18px 18px 20px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;transition:background .2s,color .2s,border-color .2s;min-width:0}
+.degrau:nth-child(1){min-height:120px}.degrau:nth-child(2){min-height:160px}.degrau:nth-child(3){min-height:200px}.degrau:nth-child(4){min-height:240px}
+.degrau .rot{font-size:11.5px}
+.degrau b{font-family:var(--f-display);font-size:20px;line-height:1.15;font-weight:600}
+.degrau:hover{border-color:var(--tinta)}
+.degrau[aria-selected="true"]{background:var(--grafite);color:var(--neve);border-color:var(--grafite)}
+.degrau[aria-selected="true"] .rot{color:var(--ouro)}
+.aqui{align-self:flex-start;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--ouro);color:var(--noite);padding:3px 9px;border-radius:999px;margin-bottom:auto}
+.detalhe{margin-top:16px;background:var(--branco);border:1px solid var(--linha-clara);border-radius:var(--raio);padding:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.detalhe>div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.detalhe p{color:var(--tinta-suave);font-size:16px}
+
+/* TOKENS */
+.tokens{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:56px;padding-top:48px;border-top:1px solid var(--grafite-3)}
+.tokens>*{min-width:0}
+.tokens textarea{width:100%;min-height:130px;resize:vertical;background:var(--noite);color:var(--neve);border:1px solid var(--grafite-3);border-radius:12px;padding:16px;font:15px/1.6 var(--f-texto)}
+.tokens textarea:focus{outline:none;border-color:var(--ouro)}
+.contagem{display:flex;gap:28px;margin-top:14px;flex-wrap:wrap}
+.contagem div{display:flex;flex-direction:column}
+.contagem strong{font-family:var(--f-display);font-size:40px;line-height:1;font-weight:700;color:var(--ouro);font-variant-numeric:tabular-nums}
+.contagem span{font-size:14px;color:var(--nevoa)}
+
+/* MODELO x APP */
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lista{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.lista li{padding-left:20px;position:relative;font-size:16px}
+.lista li::before{content:"";position:absolute;left:0;top:.7em;width:8px;height:2px;background:currentColor;opacity:.5}
+.lista.ok li::before{background:var(--ouro);opacity:1}
+.lista.nao li::before{background:var(--vermelho);opacity:1}
+.escura .lista li,.noite .lista li{color:var(--nevoa)}
+.card .lista li{color:var(--tinta-suave)}
+.escura .card .lista li{color:var(--nevoa)}
+
+/* MONTADOR DE PROMPT */
+.montador{display:grid;grid-template-columns:.85fr 1.15fr;gap:24px;align-items:start}
+.montador>*{min-width:0}
+.pecas{display:flex;flex-direction:column;gap:10px}
+.peca{text-align:left;display:grid;grid-template-columns:22px 1fr;gap:4px 12px;align-items:center;background:var(--branco);border:1px solid var(--linha-clara);border-radius:12px;padding:14px 16px;transition:border-color .15s,background .15s}
+.peca::before{content:"";width:18px;height:18px;border-radius:5px;border:1.5px solid var(--tinta-suave);grid-row:span 2;transition:background .15s,border-color .15s}
+.peca b{font-weight:600}
+.peca span{font-size:14px;color:var(--tinta-suave);grid-column:2}
+.peca:hover{border-color:var(--tinta)}
+.peca[aria-pressed="true"]{border-color:var(--grafite);background:#FBFAF6}
+.peca[aria-pressed="true"]::before{background:var(--ouro) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%231A1A19' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;border-color:var(--ouro)}
+.peca.fixa{cursor:default}
+.link{background:none;border:0;padding:6px 0;text-align:left;color:var(--ouro-texto);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.saida{display:flex;flex-direction:column;gap:12px}
+.saida .rot{display:flex;justify-content:space-between;gap:12px}
+.saida .rot span{color:var(--ouro-texto);font-weight:500}
+.saida .codigo{min-height:140px}
+.resposta{background:#DCF5D8;color:#14321A;border-radius:12px 12px 12px 4px;padding:14px 16px;font-size:15.5px;line-height:1.5;max-width:46ch}
+.nota{font-size:15px;color:var(--tinta-suave)}
+.dica{margin-top:28px;display:flex;flex-direction:column;gap:8px;background:var(--branco);border:1px dashed var(--linha-clara);border-radius:12px;padding:18px 20px}
+.dica code{font-family:var(--f-mono);font-size:14px;background:var(--ouro-vidro);padding:2px 6px;border-radius:5px}
+
+/* CONTEXTO */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--grafite-3);background:var(--grafite-2);border-radius:999px;padding:8px 14px;font-size:15px;color:var(--neve)}
+.chip i{font-style:normal;color:var(--ouro);font-family:var(--f-mono);font-size:12px;margin-right:6px}
+.mesa-demo{margin-top:40px;background:var(--noite);border:1px solid var(--grafite-3);border-radius:18px;padding:clamp(18px,3vw,28px);display:grid;grid-template-columns:1.25fr .75fr;gap:20px}
+.mesa-demo>*{min-width:0}
+.mesa-col{display:flex;flex-direction:column;gap:10px}
+.mesa{border:1.5px solid var(--ouro);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:318px}
+.chao{border:1.5px dashed var(--grafite-3);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:318px}
+.msg{border-radius:10px;padding:8px 12px;font-size:14.5px;line-height:1.4;max-width:92%}
+.msg small{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+.msg.voce{background:var(--grafite-3);color:var(--neve);align-self:flex-end}
+.msg.ia{background:var(--grafite-2);color:var(--neve);align-self:flex-start;border:1px solid var(--grafite-3)}
+.msg.chave{box-shadow:inset 0 0 0 1px var(--ouro)}
+.chao .msg{opacity:.45;align-self:stretch;max-width:100%}
+.chao .vazio{color:var(--nevoa);font-size:14px}
+.mesa-acoes{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mesa-acoes .btn{padding:10px 18px;font-size:15px}
+.alerta{grid-column:1/-1;background:rgba(194,83,63,.16);border:1px solid rgba(194,83,63,.5);color:#F3D2CB;border-radius:10px;padding:12px 16px;font-size:15px}
+.regras{margin-top:40px}
+.regras .card h3{color:var(--neve)}
+
+/* HARNESS */
+.harness{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.harness .card{padding:20px}
+.harness .card h3{font-size:18px}
+.harness .card p{font-size:15px}
+.cerebro{background:var(--grafite)!important;color:var(--neve);border-color:var(--grafite)!important;align-items:center;justify-content:center;text-align:center;position:relative}
+.cerebro .disco{width:74px;height:74px;border-radius:50%;border:1.5px solid var(--ouro);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--ouro);margin-bottom:6px}
+.cerebro p{color:var(--nevoa)!important}
+.exemplos{margin-top:16px}
+.exemplos .card .rot{color:var(--ouro-texto)}
+.frase{margin-top:40px;font-family:var(--f-display);font-size:clamp(24px,3vw,36px);line-height:1.2;letter-spacing:-.02em;font-weight:600;max-width:28ch;text-wrap:balance}
+
+/* FERRAMENTAS */
+.fluxo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+.passo-fluxo{background:var(--branco);border:1px solid var(--linha-clara);border-radius:10px;padding:10px 14px;font-size:15px}
+.passo-fluxo.ini{background:var(--grafite);color:var(--neve);border-color:var(--grafite)}
+.seta{color:var(--ouro-texto);font-family:var(--f-mono)}
+.mcp{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:center;background:var(--grafite);color:var(--neve);border-radius:18px;padding:clamp(22px,3.5vw,36px);margin-top:16px}
+.mcp>*{min-width:0}
+.mcp p{color:var(--nevoa)}
+.tomadas{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tomada{border:1px solid var(--grafite-3);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;font-size:15px}
+.tomada b{font-weight:600}
+.tomada span{color:var(--nevoa);font-size:13.5px}
+
+/* SKILLS */
+.skills-grade{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+.skills-grade>*{min-width:0}
+.ideias{display:flex;flex-wrap:wrap;gap:8px}
+.ideias span{border:1px solid var(--grafite-3);border-radius:999px;padding:7px 13px;font-size:14.5px;color:var(--neve)}
+
+/* AGENTES */
+.ciclo{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.etapa{background:var(--branco);border:1px solid var(--linha-clara);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 150px}
+.etapa b{font-family:var(--f-display);font-size:18px;font-weight:600}
+.etapa span{font-size:14px;color:var(--tinta-suave)}
+.etapa.volta{border-style:dashed}
+.ciclo .seta{flex:0 0 auto}
+.tabela-wrap{overflow-x:auto;border:1px solid var(--linha-clara);border-radius:var(--raio);background:var(--branco)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15.5px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--linha-clara);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave);font-weight:500}
+td:first-child{font-weight:600;width:24%}
+td.dest{background:#FBF6E8}
+
+/* CUIDADOS */
+.cuidado .rot{color:var(--ouro)}
+
+/* NA PRÁTICA */
+.abas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.aba{border:1px solid var(--linha-clara);background:var(--branco);border-radius:999px;padding:9px 18px;font-weight:600;font-size:15px}
+.aba[aria-selected="true"]{background:var(--grafite);color:var(--neve);border-color:var(--grafite)}
+.painel{display:grid;grid-template-columns:1fr 1.1fr;gap:24px;align-items:start}
+.painel>*{min-width:0}
+.painel .lista li{color:var(--tinta);font-size:16.5px}
+.painel .lista{gap:12px}
+.copiar-wrap{display:flex;flex-direction:column;gap:10px}
+.copiar-wrap .topo-copia{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.copiar{border:1px solid var(--linha-clara);background:var(--branco);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600}
+.copiar:hover{border-color:var(--tinta)}
+
+/* PLANO */
+.passos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.passos li{display:grid;grid-template-columns:72px 1fr;gap:20px;padding:24px 0;border-top:1px solid var(--grafite-3)}
+.passos li:last-child{border-bottom:1px solid var(--grafite-3)}
+.passos .num{font-family:var(--f-display);font-size:44px;line-height:1;font-weight:700;color:var(--ouro)}
+.passos h3{margin-bottom:6px;color:var(--neve)}
+.passos p{color:var(--nevoa);max-width:64ch}
+.tarefa{margin-top:32px;background:var(--noite);color:var(--neve);border:1.5px solid var(--ouro);border-radius:18px;padding:clamp(22px,3.5vw,34px);display:flex;flex-direction:column;gap:10px}
+.tarefa .rot{color:var(--ouro)}
+.tarefa h3{font-size:clamp(22px,2.6vw,30px);font-weight:700}
+.tarefa p{font-size:17px;max-width:62ch;color:var(--nevoa)}
+
+/* GLOSSÁRIO */
+.busca{width:100%;max-width:420px;border:1px solid var(--linha-clara);background:var(--branco);border-radius:999px;padding:12px 20px;font:16px var(--f-texto);color:var(--tinta)}
+.busca:focus{outline:none;border-color:var(--tinta)}
+.termos{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));margin-top:24px}
+.termo{background:var(--branco);border:1px solid var(--linha-clara);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.termo b{font-family:var(--f-display);font-size:18px;font-weight:600}
+.termo p{font-size:15px;color:var(--tinta-suave)}
+
+/* FIM */
+.fim h2{max-width:20ch;font-size:clamp(32px,5vw,64px)}
+.rodape{margin-top:72px;padding-top:24px;border-top:1px solid var(--grafite-3);font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--nevoa);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* PARTE 2: O CLAUDE */
+.mapa{display:flex;flex-direction:column;border-top:1px solid var(--grafite-3)}
+.mapa a{display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1.4fr);gap:16px;align-items:center;padding:18px 0;border-bottom:1px solid var(--grafite-3);text-decoration:none}
+.mapa .de{color:var(--nevoa);font-size:16.5px}
+.mapa .seta{color:var(--ouro);font-family:var(--f-mono)}
+.mapa b{font-family:var(--f-display);font-size:clamp(20px,2.3vw,28px);font-weight:600;line-height:1.2;transition:color .15s}
+.mapa a:hover b{color:var(--ouro)}
+.onde-usa{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.grade.tres{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card p.uso{font-family:var(--f-mono);font-size:13px;color:var(--ouro-texto);margin-top:auto;padding-top:6px}
+.escura .card p.uso{color:var(--ouro)}
+.passinhos{list-style:none;margin:0;padding:0;counter-reset:p;display:flex;flex-direction:column;gap:10px}
+.passinhos li{counter-increment:p;display:grid;grid-template-columns:28px 1fr;gap:10px;color:var(--nevoa);font-size:16px}
+.passinhos li::before{content:counter(p);font-family:var(--f-mono);color:var(--ouro);font-size:14px;padding-top:2px}
+.passinhos b{color:var(--neve);font-weight:600}
+.onde{font-size:15px;color:var(--tinta-suave)}
+.onde b{color:var(--tinta)}
+@media (max-width:900px){.grade.tres{grid-template-columns:1fr}}
+@media (max-width:720px){.mapa a{grid-template-columns:1fr;gap:4px}.mapa .seta{display:none}}
+
+/* VS CODE: as cores da tela são as do próprio VS Code no tema escuro */
+.vs-legenda{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.vs-leg{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--grafite-3);background:var(--grafite-2);color:var(--neve);border-radius:999px;padding:8px 14px;font-size:15px;font-weight:600}
+.vs-leg i{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--ouro)}
+.vs-leg[aria-pressed="true"]{background:var(--ouro);color:var(--noite);border-color:var(--ouro)}
+.vs-leg[aria-pressed="true"] i{color:var(--noite)}
+.vs-wrap{overflow-x:auto;border-radius:14px}
+.vs{min-width:680px;background:#1E1E1E;border:1px solid var(--grafite-3);border-radius:14px;overflow:hidden;font-size:13px;color:#CCCCCC}
+.vs-barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#2B2B2B;border-bottom:1px solid #111}
+.vs-barra span{width:11px;height:11px;border-radius:50%;background:#555}
+.vs-barra b{flex:1;text-align:center;font-weight:500;font-size:12.5px;color:#AAA;padding-right:40px}
+.vs-corpo{display:grid;grid-template-columns:44px 180px minmax(0,1fr) 250px;grid-template-rows:minmax(240px,auto) 64px}
+.vs-atividade{grid-row:1/3;grid-column:1;background:#252526;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:14px;border-right:1px solid #111}
+.vs-atividade i{width:20px;height:20px;border-radius:5px;border:1.5px solid #6A6A6A}
+.vs-zona{transition:opacity .2s,box-shadow .2s;padding:10px 12px;min-width:0}
+.vs-explorador{grid-row:1/3;grid-column:2;background:#252526;border-right:1px solid #111}
+.vs-editor{grid-row:1;grid-column:3;background:#1E1E1E}
+.vs-terminal{grid-row:2;grid-column:3;background:#181818;border-top:1px solid #333;font-family:var(--f-mono);font-size:12px}
+.vs-claude{grid-row:1/3;grid-column:4;background:#202020;border-left:1px solid #111;display:flex;flex-direction:column;gap:8px}
+.vs-tit{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A8A;margin-bottom:6px}
+.vs ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-family:var(--f-mono);font-size:12.5px}
+.vs li.sub{padding:1px 6px 1px 16px;color:#B5B5B5}
+.vs li.ativo{color:#fff;background:#37373D;border-radius:4px}
+.vs-aba{display:inline-block;font-family:var(--f-mono);font-size:12px;border-top:2px solid var(--ouro);padding:4px 10px;margin-bottom:10px;color:#fff;background:#252526}
+.vs pre{margin:0;font-family:var(--f-mono);font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:#D4D4D4}
+.vs del{display:block;text-decoration:none;background:rgba(194,83,63,.25);color:#F0B4A8}
+.vs ins{display:block;text-decoration:none;background:rgba(80,160,90,.25);color:#B9E4BE}
+.vs-msg{border-radius:8px;padding:7px 10px;font-size:12.5px;line-height:1.4}
+.vs-msg.eu{background:#333;align-self:flex-end;max-width:90%}
+.vs-msg.ele{background:#2A2A2A;border:1px solid #3A3A3A}
+.vs-botoes{display:flex;gap:6px}
+.vs-botoes span{border:1px solid #444;border-radius:6px;padding:3px 9px;font-size:12px}
+.vs-botoes .ok{background:var(--ouro);color:var(--noite);border-color:var(--ouro)}
+.vs-campo{margin-top:auto;border:1px solid #444;border-radius:8px;padding:8px 10px;font-size:12px;color:#888}
+.vs-campo b{color:var(--ouro);font-weight:500}
+.vs.foco .vs-zona{opacity:.35}
+.vs.foco .vs-zona.ativa{opacity:1;box-shadow:inset 0 0 0 2px var(--ouro)}
+.vs-explica{margin-top:14px;font-size:16.5px;color:var(--nevoa);min-height:3.2em;max-width:72ch}
+.vs-explica b{color:var(--neve)}
+.faixa.noite + .faixa.escura{border-top:1px solid var(--grafite-3)}
+
+/* CONTROLE DE APRESENTAÇÃO */
+.controle{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:4px;background:rgba(26,26,25,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--neve);border:1px solid var(--grafite-3);border-radius:999px;padding:5px}
+.controle button{width:38px;height:38px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;font-size:18px;color:var(--neve)}
+.controle button:hover{background:var(--grafite-3)}
+.controle span{font-family:var(--f-mono);font-size:12.5px;min-width:84px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+
+@media (max-width:900px){
+  .hero-grade,.montador,.mesa-demo,.mcp,.skills-grade,.painel,.tokens,.duas{grid-template-columns:1fr}
+  .detalhe{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:720px){
+  body{font-size:16px}
+  .escada{grid-template-columns:repeat(2,1fr)}
+  .degrau:nth-child(n){min-height:118px}
+  .harness{grid-template-columns:repeat(2,1fr)}
+  .cerebro{grid-column:1/-1;order:-1}
+  .tomadas{grid-template-columns:1fr}
+  .passos li{grid-template-columns:48px 1fr;gap:14px}
+  .passos .num{font-size:32px}
+  .mesa,.chao{min-height:0}
+  .controle span{min-width:56px;max-width:90px}
+}
+@media (max-width:440px){
+  .harness{grid-template-columns:1fr}
+}
+</style>
+
+<main>
+
+<!-- HERO -->
+<section class="faixa noite hero" id="inicio" data-nome="Início">
+  <div class="wrap">
+    <div class="topo"><span><b>VR Concept</b> · Consultoria de IA</span><span>Para a Dra. Gabriela · 23 out 2026</span></div>
+    <div class="hero-grade">
+      <div>
+        <div class="kicker">Do zero, com o Claude</div>
+        <h1 style="margin-top:18px">Do chat a um <em class="ouro">time de IA</em> trabalhando na VR.</h1>
+        <p class="lead">Primeiro, os conceitos que realmente mudam o resultado, com a clínica como exemplo. Depois, cada um deles dentro do Claude, e o plano para usar na gestão, no comercial, no conteúdo e na escola.</p>
+        <div class="acoes">
+          <a class="btn" href="#ponto">Começar</a>
+          <a class="btn sec" href="#plano">Ver o plano</a>
+        </div>
+      </div>
+      <nav class="agenda" aria-label="O que vamos ver">
+        <div class="rot">O que você vai sair sabendo</div>
+        <ol>
+          <li><a href="#ia"><span class="n">01</span><span><b>O que a IA é, e o que ela não é</b><span class="d">por que ela erra e como evitar</span></span></a></li>
+          <li><a href="#contexto"><span class="n">02</span><span><b>Prompt e contexto</b><span class="d">o que mais muda a qualidade da resposta</span></span></a></li>
+          <li><a href="#harness"><span class="n">03</span><span><b>Harness</b><span class="d">o cérebro e a clínica equipada em volta dele</span></span></a></li>
+          <li><a href="#claude"><span class="n">04</span><span><b>O Claude, peça por peça</b><span class="d">modelos, Projetos, Skills, Cowork e o VS Code</span></span></a></li>
+          <li><a href="#vr"><span class="n">05</span><span><b>Na prática, na VR</b><span class="d">usos prontos e o plano em cinco passos</span></span></a></li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- 1. ONDE VOCÊ ESTÁ -->
+<section class="faixa" id="ponto" data-nome="Onde você está">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">Ponto de partida</div>
+      <h2>Existem quatro jeitos de usar IA. Hoje você está no primeiro.</h2>
+      <p class="lead">Quase todo mundo para no chat. O salto não vem de usar mais, vem de usar diferente: a cada degrau, a IA recebe mais do que precisa para trabalhar sem você conduzir cada passo. Clique em cada nível.</p>
+    </div>
+
+    <div class="escada" role="tablist" aria-label="Níveis de uso de IA">
+      <button class="degrau" role="tab" aria-selected="true" aria-controls="nv1" id="t-nv1" data-n="1"><span class="aqui">Você está aqui</span><span class="rot">Nível 1</span><b>Conversa solta</b></button>
+      <button class="degrau" role="tab" aria-selected="false" aria-controls="nv2" id="t-nv2" data-n="2"><span class="rot">Nível 2</span><b>Chat com contexto</b></button>
+      <button class="degrau" role="tab" aria-selected="false" aria-controls="nv3" id="t-nv3" data-n="3"><span class="rot">Nível 3</span><b>IA com ferramentas e skills</b></button>
+      <button class="degrau" role="tab" aria-selected="false" aria-controls="nv4" id="t-nv4" data-n="4"><span class="rot">Nível 4</span><b>Agentes</b></button>
+    </div>
+
+    <div class="detalhe" role="tabpanel" id="nv1" aria-labelledby="t-nv1">
+      <div><span class="rot">Como é</span><p>Abre o chat, pergunta, copia a resposta. Cada conversa começa do zero, e a IA não sabe nada da VR.</p></div>
+      <div><span class="rot">Exemplo</span><p>"Me ajuda a escrever um post sobre clareamento."</p></div>
+      <div><span class="rot">O que você ganha</span><p>Alguns minutos por tarefa. A resposta sai genérica e você reescreve metade.</p></div>
+    </div>
+    <div class="detalhe" role="tabpanel" id="nv2" aria-labelledby="t-nv2" hidden>
+      <div><span class="rot">Como é</span><p>Um Projeto da VR no Claude, com as instruções fixas e os documentos da empresa. Ele já começa sabendo quem é a VR, o público, o tom e as regras.</p></div>
+      <div><span class="rot">Exemplo</span><p>"Escreve o post desta semana." E ela já sabe para quem, em que tom e o que nunca dizer.</p></div>
+      <div><span class="rot">O que você ganha</span><p>Para de repetir explicação. A resposta sai no padrão da casa.</p></div>
+    </div>
+    <div class="detalhe" role="tabpanel" id="nv3" aria-labelledby="t-nv3" hidden>
+      <div><span class="rot">Como é</span><p>Com os Conectores e as Skills do Claude, ele lê a planilha, a agenda e o Drive, e segue os procedimentos que você ensinou uma única vez.</p></div>
+      <div><span class="rot">Exemplo</span><p>"Analisa as faltas de outubro e me diz o que mudou em relação a setembro."</p></div>
+      <div><span class="rot">O que você ganha</span><p>Ela faz o trabalho, não só o texto. Você decide em cima do número de verdade.</p></div>
+    </div>
+    <div class="detalhe" role="tabpanel" id="nv4" aria-labelledby="t-nv4" hidden>
+      <div><span class="rot">Como é</span><p>Você dá o objetivo, e o Claude executa a tarefa inteira, com várias etapas, e entrega para você revisar. No Claude, isso é o Cowork e o Claude Code.</p></div>
+      <div><span class="rot">Exemplo</span><p>"Lê as 40 avaliações de alunos desta pasta e monta um relatório com os 5 pontos que mais se repetem."</p></div>
+      <div><span class="rot">O que você ganha</span><p>Trabalho acontecendo sem você estar na frente da tela.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. O QUE É IA -->
+<section class="faixa escura" id="ia" data-nome="O que é IA">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">01 · O que é IA</div>
+      <h2>Um cérebro que leu quase tudo, e nunca pisou na sua clínica.</h2>
+      <p class="lead">O Claude funciona em cima de um <b>modelo de linguagem</b>: um programa treinado com uma quantidade enorme de texto. Ele aprendeu os padrões da língua tão bem que consegue escrever, resumir, analisar e raciocinar. A resposta é montada um pedaço de cada vez, escolhendo sempre o próximo pedaço mais provável.</p>
+    </div>
+
+    <p class="analogia">Pense em alguém recém-formado que leu todos os livros de odontologia, de gestão e de marketing que existem. Brilhante. Só que nunca viu um paciente seu, não conhece seus números e não sabe o jeito da VR falar. Todo o resto desta consultoria é sobre isso: <em class="ouro">dar a esse cérebro o que ele não sabe.</em></p>
+
+    <div class="grade" style="margin-top:40px">
+      <div class="card"><span class="rot">Faz muito bem</span>
+        <ul class="lista ok"><li>Escrever, reescrever e mudar o tom</li><li>Resumir reunião, aula, documento longo</li><li>Organizar ideias soltas em estrutura</li><li>Analisar texto e número que você entrega</li><li>Criar dez variações em segundos</li></ul>
+      </div>
+      <div class="card"><span class="rot">Faz mal</span>
+        <ul class="lista nao"><li>Conta exata sem ferramenta</li><li>Fato muito recente, se não puder pesquisar</li><li>Detalhe de nicho que pouca gente escreveu</li><li>Dizer "não sei": ela prefere inventar com confiança</li></ul>
+      </div>
+      <div class="card"><span class="rot">Não sabe, até você contar</span>
+        <ul class="lista"><li>Quem são seus pacientes e alunos</li><li>Seus números, preços e metas</li><li>O Método VR e o jeito da casa</li><li>O que já foi decidido e o que já deu errado</li></ul>
+      </div>
+    </div>
+
+    <div class="duas" style="margin-top:16px">
+      <div class="card"><span class="rot">Modelo</span><h3>O cérebro</h3><p>No Claude são três: Opus, Sonnet e Haiku, do mais inteligente ao mais rápido. Para tarefa simples, o rápido basta; para pensar estratégia, o mais inteligente. A gente volta neles na segunda parte.</p></div>
+      <div class="card"><span class="rot">Aplicativo</span><h3>O lugar onde você conversa com ele</h3><p>O claude.ai no navegador, o app no computador e no celular, o Cowork, o Claude Code. O mesmo cérebro mora em vários lugares, e o lugar muda muito o que ele consegue fazer. Guarde isso: é o conceito de harness, mais à frente.</p></div>
+    </div>
+
+    <div class="tokens" id="tokens">
+      <div class="pilha">
+        <div class="kicker">Como ela lê</div>
+        <h3 style="font-size:clamp(24px,2.6vw,32px)">Ela não lê palavras. Lê pedaços de palavra, os tokens.</h3>
+        <p class="suave">Tudo na IA se mede em token: o quanto cabe numa conversa e quanto custa cada resposta. Em português, uma palavra dá em média um token e meio. Escreva qualquer coisa ao lado e veja a conta.</p>
+      </div>
+      <div>
+        <label class="rot" for="tk-in">Escreva aqui</label>
+        <textarea id="tk-in" style="margin-top:8px">Olá! Vi que você se interessou pelas lentes de contato dental. Posso te explicar como funciona a avaliação aqui na Odontonova?</textarea>
+        <div class="contagem" aria-live="polite">
+          <div><strong id="tk-n">0</strong><span>tokens, aproximado</span></div>
+          <div><strong id="tk-p">0</strong><span>palavras</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. PROMPT -->
+<section class="faixa" id="prompt" data-nome="O pedido">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">02 · O pedido (prompt)</div>
+      <h2>Pedido vago, resposta genérica.</h2>
+      <p class="lead">Prompt é só o nome do que você escreve para a IA. Ela não adivinha o que você deixou de dizer: quando falta informação, ela preenche com o mais comum, e o mais comum é genérico. Um bom pedido tem cinco peças. Ligue cada uma e veja o pedido e a resposta mudarem.</p>
+    </div>
+
+    <div class="montador">
+      <div class="pecas" role="group" aria-label="Peças do pedido">
+        <button class="peca" data-k="papel" aria-pressed="false"><b>Papel</b><span>quem ela deve ser</span></button>
+        <button class="peca" data-k="contexto" aria-pressed="false"><b>Contexto</b><span>o cenário e os fatos</span></button>
+        <button class="peca fixa" data-k="tarefa" aria-pressed="true" aria-disabled="true"><b>Tarefa</b><span>o que você quer (sempre ligada)</span></button>
+        <button class="peca" data-k="formato" aria-pressed="false"><b>Formato</b><span>tamanho, tom, estrutura</span></button>
+        <button class="peca" data-k="limites" aria-pressed="false"><b>Exemplo e limites</b><span>o que seguir e o que evitar</span></button>
+        <button class="link" id="pc-tudo" type="button">Ligar todas</button>
+      </div>
+      <div class="saida">
+        <div class="rot">O pedido <span id="pc-n">1 de 5 peças</span></div>
+        <pre class="codigo" id="pc-prompt"></pre>
+        <div class="rot">Como a resposta tende a sair</div>
+        <div class="resposta" id="pc-resp"></div>
+        <p class="nota" id="pc-falta"></p>
+      </div>
+    </div>
+
+    <div class="dica">
+      <span class="rot">Atalho que funciona sempre</span>
+      <p>Termine o pedido com <code>Antes de responder, me faça as perguntas que você precisar.</code> Ela descobre o que falta e você só responde.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. CONTEXTO -->
+<section class="faixa escura" id="contexto" data-nome="Contexto">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">03 · Contexto</div>
+      <h2>O conceito que mais muda o resultado.</h2>
+      <p class="lead">Contexto é tudo o que a IA está vendo no momento de responder. Fora disso, ela não sabe de nada. Pense numa mesa de trabalho: o que está em cima da mesa, ela usa; o que ficou na gaveta, para ela não existe.</p>
+    </div>
+
+    <div class="rot" style="margin-bottom:12px">O que fica em cima da mesa</div>
+    <div class="chips">
+      <span class="chip"><i>1</i>Instruções fixas</span>
+      <span class="chip"><i>2</i>Arquivos e documentos</span>
+      <span class="chip"><i>3</i>A conversa até aqui</span>
+      <span class="chip"><i>4</i>O que as ferramentas trouxeram</span>
+    </div>
+
+    <div class="mesa-demo" aria-label="Demonstração da janela de contexto">
+      <div class="mesa-col">
+        <div class="rot">Em cima da mesa: o que ela vê</div>
+        <div class="mesa" id="mesa"></div>
+      </div>
+      <div class="mesa-col">
+        <div class="rot">Caiu da mesa: para ela não existe mais</div>
+        <div class="chao" id="chao"></div>
+      </div>
+      <div class="mesa-acoes">
+        <button class="btn" id="mesa-mais" type="button">Mandar mais uma mensagem</button>
+        <button class="btn sec" id="mesa-nova" type="button">Começar conversa nova</button>
+        <span class="suave" style="font-size:14px">Exagerado de propósito: a mesa de verdade é enorme, mas em conversa longa o efeito é este.</span>
+      </div>
+      <p class="alerta" id="mesa-alerta" hidden></p>
+    </div>
+
+    <div class="grade regras">
+      <div class="card"><span class="rot">Regra 1</span><h3>Cada conversa nova é uma mesa limpa.</h3><p>Ela não lembra do chat de ontem, a não ser que a memória esteja ligada ou que você traga a informação de novo.</p></div>
+      <div class="card"><span class="rot">Regra 2</span><h3>A mesa tem tamanho.</h3><p>Em conversa longa demais, o começo cai da mesa e ela se perde. Um assunto por conversa.</p></div>
+      <div class="card"><span class="rot">Regra 3</span><h3>O que entra decide o que sai.</h3><p>Colar o documento de verdade vale mais do que descrever de cabeça. Contexto certo vale mais do que prompt bonito.</p></div>
+    </div>
+
+    <p class="frase">O nome disso é <em class="ouro">engenharia de contexto</em>: escolher o que entra na mesa. É a habilidade mais valiosa de quem trabalha com IA hoje.</p>
+  </div>
+</section>
+
+<!-- 5. HARNESS -->
+<section class="faixa" id="harness" data-nome="Harness">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">04 · Harness</div>
+      <h2>O modelo é o cérebro. O harness é a clínica equipada em volta dele.</h2>
+      <p class="lead">Harness, em inglês, é o arreio: o que prende e direciona a força do cavalo. Na IA, é todo o sistema em volta do modelo: as instruções, a memória, as ferramentas, os arquivos, as permissões e o ciclo que deixa a IA agir, conferir e continuar.</p>
+    </div>
+
+    <p class="analogia" style="margin-bottom:40px">O mesmo profissional excelente rende uma coisa num consultório vazio e outra numa clínica com prontuário, raio-x, auxiliar e protocolo. O talento é o mesmo; muda a estrutura em volta. <em class="ouro" style="color:var(--ouro-texto)">O dentista é o modelo. A clínica equipada é o harness.</em></p>
+
+    <div class="harness">
+      <div class="card"><span class="rot">Instruções fixas</span><h3>O manual da casa</h3><p>Quem é a VR, o público, o tom, os nãos.</p></div>
+      <div class="card"><span class="rot">Memória</span><h3>O que ela aprendeu com você</h3><p>Preferências e decisões guardadas entre conversas.</p></div>
+      <div class="card"><span class="rot">Ferramentas</span><h3>As mãos</h3><p>Pesquisar, ler planilha, agendar, enviar.</p></div>
+      <div class="card"><span class="rot">Arquivos</span><h3>Os documentos</h3><p>O Método VR, os cursos, os números da clínica.</p></div>
+      <div class="card cerebro"><div class="disco">Modelo</div><h3>O cérebro</h3><p>Opus, Sonnet ou Haiku</p></div>
+      <div class="card"><span class="rot">Skills</span><h3>Os protocolos</h3><p>O passo a passo de cada tarefa, do jeito da VR.</p></div>
+      <div class="card"><span class="rot">Permissões</span><h3>O que pode e o que não pode</h3><p>Ler sim, apagar não; enviar só depois de revisar.</p></div>
+      <div class="card"><span class="rot">Ciclo de trabalho</span><h3>Agir, conferir, continuar</h3><p>Ela tenta, olha o resultado e corrige sozinha.</p></div>
+      <div class="card"><span class="rot">Onde aparece</span><h3>A porta de entrada</h3><p>O app, o navegador, o computador.</p></div>
+    </div>
+
+    <div class="grade exemplos">
+      <div class="card"><span class="rot">Harness simples</span><h3>O chat do Claude</h3><p>claude.ai e o app. Conversa, lê o arquivo que você sobe, pesquisa na internet. É onde você está hoje.</p></div>
+      <div class="card"><span class="rot">Harness de trabalho</span><h3>Cowork</h3><p>Dentro do app do computador. O Claude trabalha numa pasta sua: lê, organiza, monta planilha e relatório, por conta própria.</p></div>
+      <div class="card"><span class="rot">Harness completo</span><h3>Claude Code</h3><p>Lê e escreve qualquer arquivo, usa ferramentas, segue skills e trabalha por horas. É como a Altta trabalha hoje, e foi assim que o OS da VR foi construído.</p></div>
+    </div>
+
+    <p class="frase">A diferença entre a IA que escreve um textinho e a IA que trabalha quase nunca é o modelo. <span class="marca">É o harness.</span></p>
+  </div>
+</section>
+
+<!-- PARTE 2: O CLAUDE -->
+<section class="faixa noite" id="claude" data-nome="Parte 2: o Claude">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">Parte 2 · O Claude</div>
+      <h2>Daqui em diante, tudo isso dentro do Claude.</h2>
+      <p class="lead">O Claude é a IA da Anthropic, a que a Altta usa no dia a dia e a que a VR vai usar. Cada conceito da primeira parte tem um lugar certo dentro dele. Este é o mapa.</p>
+    </div>
+    <nav class="mapa" aria-label="Onde cada conceito fica no Claude">
+      <a href="#modelos"><span class="de">O modelo, o cérebro</span><span class="seta">→</span><b>Opus, Sonnet e Haiku</b></a>
+      <a href="#manual"><span class="de">Instruções fixas e memória</span><span class="seta">→</span><b>Projetos e Memória</b></a>
+      <a href="#ferramentas"><span class="de">Ferramentas, as mãos</span><span class="seta">→</span><b>Pesquisa, Research, arquivos e Artifacts</b></a>
+      <a href="#ferramentas"><span class="de">MCP, a tomada universal</span><span class="seta">→</span><b>Conectores</b></a>
+      <a href="#skills"><span class="de">Os protocolos</span><span class="seta">→</span><b>Skills</b></a>
+      <a href="#agentes"><span class="de">Agentes</span><span class="seta">→</span><b>Cowork, Claude Code e Claude in Chrome</b></a>
+      <a href="#vscode"><span class="de">O escritório do Claude Code</span><span class="seta">→</span><b>VS Code</b></a>
+    </nav>
+    <div class="onde-usa">
+      <span class="chip"><i>web</i>claude.ai no navegador</span>
+      <span class="chip"><i>app</i>Mac e Windows</span>
+      <span class="chip"><i>app</i>iPhone e Android</span>
+    </div>
+  </div>
+</section>
+
+<!-- MODELOS -->
+<section class="faixa" id="modelos" data-nome="Os modelos">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 05 · Os modelos</div>
+      <h2>Três cérebros, um para cada tipo de trabalho.</h2>
+      <p class="lead">Na caixa de conversa do Claude tem um seletor de modelo. Escolher o certo é metade do resultado: o mais inteligente para pensar, o rápido para o que é simples.</p>
+    </div>
+    <div class="grade tres">
+      <div class="card"><span class="rot">Para pensar</span><h3>Opus 5.5</h3><p>O mais inteligente. Estratégia, planejamento, análise difícil, documento importante. É mais lento e consome mais do seu limite de uso.</p><p class="uso">Ex.: desenhar a consultoria de gestão</p></div>
+      <div class="card"><span class="rot">Para o dia a dia</span><h3>Sonnet 5.5</h3><p>Rápido e muito bom. Textos, respostas, resumos, análises: a maior parte do trabalho fica aqui.</p><p class="uso">Ex.: escrever o carrossel da semana</p></div>
+      <div class="card"><span class="rot">Para o simples e repetido</span><h3>Haiku 5.5</h3><p>O mais rápido e o mais econômico. Separar, classificar, responder curto. Brilha nas automações.</p><p class="uso">Ex.: separar os leads por interesse</p></div>
+    </div>
+    <div class="duas" style="margin-top:16px">
+      <div class="card"><span class="rot">Pensamento estendido</span><h3>O botão de pensar mais</h3><p>Ligado, o Claude raciocina passo a passo antes de responder. Use em decisão, conta e planejamento. Para texto simples, não precisa.</p></div>
+      <div class="card"><span class="rot">Os planos</span><h3>Qual conta usar</h3><p>Pro para começar. Max para uso pesado, com muito mais limite. Team quando a equipe for usar junto, com a conta da empresa.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. PROJETOS E MEMÓRIA -->
+<section class="faixa escura" id="manual" data-nome="Projetos e memória">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 06 · Projetos e memória</div>
+      <h2>No Claude, o manual da VR mora num Projeto.</h2>
+      <p class="lead">No nível 1, você explica tudo de novo em toda conversa. No Claude, isso fica escrito uma vez só, num Projeto: as instruções e os documentos que ele lê antes de qualquer resposta. É isso que faz o resultado sair no padrão da casa.</p>
+    </div>
+    <div class="skills-grade">
+      <pre class="codigo"><span class="k"># VR Concept · instruções fixas</span>
+
+<span class="k">Quem somos:</span> escola odontológica do Dr. Vinícius e da
+Dra. Gabriela, e a clínica Odontonova (Bocaiuva, MG).
+
+<span class="k">Para quem falamos:</span> dentistas que querem crescer
+na técnica e na gestão da clínica.
+
+<span class="k">Tom:</span> direto e acolhedor, de quem faz na prática.
+Sem promessa milagrosa, sem exagero.
+
+<span class="k">Nunca:</span> inventar caso de paciente, citar preço sem
+confirmar, usar dado de paciente identificado.
+
+<span class="k">Sempre:</span> terminar com o próximo passo claro.</pre>
+      <div class="pilha">
+        <div class="rot">Como montar</div>
+        <ol class="passinhos">
+          <li><span>No menu da esquerda, abra <b>Projetos</b> e crie o <b>VR Concept</b>.</span></li>
+          <li><span>Nas <b>instruções do projeto</b>, cole o manual, como o do lado.</span></li>
+          <li><span>No <b>conhecimento do projeto</b>, suba os documentos: o Método VR, os cursos, as perguntas frequentes, o tom de voz.</span></li>
+          <li><span>Toda conversa de trabalho da VR começa <b>dentro do projeto</b>.</span></li>
+        </ol>
+        <div class="card"><span class="rot">Memória</span><h3>Ele lembra das conversas</h3><p>Com a memória ligada nas configurações, o Claude guarda preferências, decisões e correções. Dentro de um projeto, a memória é só daquele projeto: o que é da VR não se mistura com o resto.</p></div>
+        <div class="card"><span class="rot">Preferências</span><h3>O que vale em toda conversa</h3><p>Nas configurações do perfil, o que vale para você em qualquer projeto. Ex.: "Responda em português, direto, sem enrolação."</p></div>
+        <p class="suave" style="font-size:15.5px">O manual é vivo: cada vez que o Claude erra, a correção vira uma linha nova. Na Altta, esse arquivo tem centenas de regras, e é por isso que o trabalho sai no padrão sem ninguém repetir. No Claude Code, ele se chama CLAUDE.md.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FERRAMENTAS E CONECTORES -->
+<section class="faixa" id="ferramentas" data-nome="Ferramentas">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 07 · Ferramentas e conectores</div>
+      <h2>As mãos do Claude.</h2>
+      <p class="lead">Sem ferramenta, a IA só escreve. Com ferramenta, ela faz. O Claude já vem com várias, decide sozinho quando usar cada uma, e o resultado volta para a mesa dele.</p>
+    </div>
+
+    <div class="grade tres">
+      <div class="card"><span class="rot">Pesquisa na web</span><h3>O que é recente</h3><p>Busca na internet o que ele não sabe e mostra de onde tirou cada informação.</p></div>
+      <div class="card"><span class="rot">Research</span><h3>A pesquisa profunda</h3><p>Passa minutos lendo dezenas de fontes e entrega um relatório com as referências. Bom para concorrente, tendência, tema de aula.</p></div>
+      <div class="card"><span class="rot">Análise de dados</span><h3>Planilha de verdade</h3><p>Sobe a planilha e ele calcula, cruza e desenha o gráfico, fazendo a conta de verdade em vez de chutar.</p></div>
+      <div class="card"><span class="rot">Arquivos</span><h3>Word, Excel, PowerPoint, PDF</h3><p>Pede o documento e ele entrega o arquivo pronto para baixar e editar.</p></div>
+      <div class="card"><span class="rot">Artifacts</span><h3>Páginas interativas</h3><p>Ferramentas e páginas que abrem por um link. Esta apresentação é um artifact feito pelo Claude.</p></div>
+      <div class="card"><span class="rot">Claude in Chrome</span><h3>O Claude no navegador</h3><p>Uma extensão que navega, clica e preenche por você, pedindo licença antes do que importa.</p></div>
+    </div>
+
+    <div class="rot" style="margin:40px 0 10px">Um pedido, com o conector do OS da VR</div>
+    <div class="fluxo">
+      <span class="passo-fluxo ini">"Quantos leads de lente chegaram esta semana, e quantos agendaram?"</span>
+      <span class="seta">→</span><span class="passo-fluxo">consulta o OS da VR</span>
+      <span class="seta">→</span><span class="passo-fluxo">conta e compara com a semana passada</span>
+      <span class="seta">→</span><span class="passo-fluxo">responde com o número e a leitura</span>
+    </div>
+
+    <div class="mcp">
+      <div class="pilha">
+        <div class="kicker">Conectores (MCP)</div>
+        <h3 style="font-size:clamp(24px,2.6vw,32px);color:var(--neve)">A tomada universal.</h3>
+        <p>Por trás dos conectores está o MCP, um padrão aberto criado pela Anthropic para ligar a IA em qualquer sistema. Em vez de cada aplicativo inventar um jeito, todo mundo usa a mesma tomada. Você liga uma vez, nas configurações, em <b style="color:var(--neve)">Conectores</b>, e o Claude passa a enxergar aquele sistema.</p>
+      </div>
+      <div class="tomadas">
+        <div class="tomada"><b>Google Drive</b><span>documentos e planilhas</span></div>
+        <div class="tomada"><b>Gmail</b><span>ler e rascunhar e-mails</span></div>
+        <div class="tomada"><b>Google Agenda</b><span>horários e reuniões</span></div>
+        <div class="tomada"><b>Notion</b><span>páginas e bases de dados</span></div>
+        <div class="tomada"><b>Canva</b><span>peças de design</span></div>
+        <div class="tomada"><b>OS da VR</b><span>leads, vendas, financeiro (a montar)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. SKILLS -->
+<section class="faixa escura" id="skills" data-nome="Skills">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 08 · Skills</div>
+      <h2>Skills são os protocolos da IA. Você ensina uma vez, ela faz igual sempre.</h2>
+      <p class="lead">Uma skill é uma pasta com o passo a passo de uma tarefa, mais os modelos e os exemplos do jeito da VR. O Claude enxerga só o nome e a descrição de cada uma; quando a tarefa aparece, ele abre a skill certa e segue. A mesa não lota, e o resultado sai padronizado.</p>
+    </div>
+
+    <p class="analogia" style="margin-bottom:40px">É o POP da clínica. Ninguém explica do zero como se faz a esterilização toda vez: existe o protocolo, e todo mundo segue. <em class="ouro">Skill é o protocolo da IA.</em></p>
+
+    <div class="skills-grade">
+      <pre class="codigo"><span class="c">---</span>
+<span class="k">name:</span> responder-lead-lentes
+<span class="k">description:</span> Responde lead interessado em lentes
+  de contato dental, no tom da VR. Use quando chegar
+  pergunta sobre lente ou faceta.
+<span class="c">---</span>
+
+1. Cumprimente pelo nome e agradeça o interesse.
+2. Pergunte o que mais incomoda no sorriso hoje.
+3. Explique a avaliação em duas linhas: o que
+   acontece e quanto tempo leva.
+4. Ofereça dois horários.
+5. Nunca fale preço antes da avaliação.
+
+<span class="c">Respostas aprovadas: exemplos.md</span></pre>
+      <div class="pilha">
+        <div class="rot">Como ter no Claude</div>
+        <ul class="lista ok">
+          <li>Já vêm prontas as skills de Word, Excel, PowerPoint e PDF.</li>
+          <li>As suas, você sobe nas configurações, na parte de Skills.</li>
+          <li>Não precisa escrever na mão: peça "Me ajuda a criar uma skill para responder lead de lentes no tom da VR" e o Claude monta a pasta.</li>
+          <li>A mesma skill funciona no app, no Cowork e no Claude Code.</li>
+        </ul>
+        <div class="rot" style="margin-top:12px">Skills que a VR pode ter</div>
+        <div class="ideias">
+          <span>Relatório do mês da Odontonova</span>
+          <span>Aula do Vinícius vira carrossel</span>
+          <span>Ata de reunião com tarefas e responsáveis</span>
+          <span>Resposta para objeção de preço</span>
+          <span>Roteiro da primeira consulta</span>
+          <span>Revisar texto no tom da VR</span>
+          <span>Follow-up de orçamento parado</span>
+          <span>Módulo novo da consultoria</span>
+        </div>
+        <p class="suave" style="font-size:15.5px;margin-top:8px">Na Altta já são dezenas de skills rodando, do carrossel do Instagram ao relatório de cliente. Cada uma nasceu de uma tarefa que se repetia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. AGENTES -->
+<section class="faixa" id="agentes" data-nome="Agentes">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 09 · Agentes</div>
+      <h2>No chat, você trabalha com ajuda da IA. Com agente, a IA trabalha e você revisa.</h2>
+      <p class="lead">Um agente é o Claude trabalhando em ciclo: recebe um objetivo, planeja, usa as ferramentas, confere o resultado e continua até terminar. Você não precisa conduzir cada passo.</p>
+    </div>
+
+    <div class="ciclo">
+      <div class="etapa"><b>Objetivo</b><span>você diz o que quer</span></div><span class="seta">→</span>
+      <div class="etapa"><b>Planeja</b><span>divide em etapas</span></div><span class="seta">→</span>
+      <div class="etapa"><b>Age</b><span>usa as ferramentas</span></div><span class="seta">→</span>
+      <div class="etapa"><b>Confere</b><span>ficou bom? se não, volta</span></div><span class="seta">→</span>
+      <div class="etapa volta"><b>Entrega</b><span>para você revisar</span></div>
+    </div>
+
+    <div class="tabela-wrap" style="margin-top:32px">
+      <table>
+        <thead><tr><th></th><th>Chat</th><th>Agente</th></tr></thead>
+        <tbody>
+          <tr><td>Quem conduz</td><td>Você, passo a passo</td><td class="dest">A IA, a partir do objetivo</td></tr>
+          <tr><td>Etapas</td><td>Uma pergunta, uma resposta</td><td class="dest">Várias, em sequência, até terminar</td></tr>
+          <tr><td>Ferramentas</td><td>Poucas ou nenhuma</td><td class="dest">Usa as que precisar</td></tr>
+          <tr><td>Seu papel</td><td>Fazer, com ajuda</td><td class="dest">Dar a direção e revisar</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rot" style="margin:40px 0 12px">Os agentes do Claude</div>
+    <div class="duas">
+      <div class="card"><span class="rot">Cowork</span><h3>O agente do escritório</h3><p>No app do computador, você aponta uma pasta e dá o objetivo. O Claude lê, organiza, monta planilha e relatório, e vai mostrando o andamento. É o melhor próximo passo para a VR.</p></div>
+      <div class="card"><span class="rot">Claude Code</span><h3>O agente de quem constrói</h3><p>Cria sistemas, trabalha por horas e divide o trabalho entre subagentes: um pesquisa, outro escreve, outro revisa, como um time com coordenação. Foi assim que o OS da VR foi construído.</p></div>
+      <div class="card"><span class="rot">Claude in Chrome</span><h3>O agente no navegador</h3><p>Pesquisa, compara e preenche formulário no seu navegador, com você vendo cada passo.</p></div>
+      <div class="card"><span class="rot">O próximo da VR</span><h3>O resumo das 8h</h3><p>Um agente que toda manhã lê os leads novos, as faltas e as vendas do dia anterior e manda para você o que pede atenção.</p></div>
+    </div>
+    <div class="dica">
+      <span class="rot">Um pedido de Cowork</span>
+      <p><code>Na pasta Avaliações dos alunos, leia todos os arquivos, monte uma planilha com os 5 pontos que mais aparecem e escreva um resumo de uma página para a reunião de segunda.</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- VS CODE -->
+<section class="faixa noite" id="vscode" data-nome="VS Code">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 10 · VS Code</div>
+      <h2>O VS Code é o escritório onde o Claude Code trabalha.</h2>
+      <p class="lead">O VS Code é um programa gratuito para abrir uma pasta inteira e mexer nos arquivos dela. Nasceu para programador, mas serve para qualquer pessoa: com a extensão do Claude Code, você vê a pasta da VR de um lado, o arquivo no meio e a conversa com o Claude do outro, e acompanha cada mudança que ele faz. Clique em cada parte da tela.</p>
+    </div>
+
+    <div class="vs-legenda" role="group" aria-label="Partes do VS Code">
+      <button class="vs-leg" type="button" data-z="explorador" aria-pressed="false"><i>1</i>Explorador</button>
+      <button class="vs-leg" type="button" data-z="editor" aria-pressed="false"><i>2</i>Editor</button>
+      <button class="vs-leg" type="button" data-z="claude" aria-pressed="true"><i>3</i>Claude Code</button>
+      <button class="vs-leg" type="button" data-z="terminal" aria-pressed="false"><i>4</i>Terminal</button>
+    </div>
+    <div class="vs-wrap">
+      <div class="vs" id="vs">
+        <div class="vs-barra"><span></span><span></span><span></span><b>VR Concept</b></div>
+        <div class="vs-corpo">
+          <div class="vs-atividade" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="vs-zona vs-explorador" data-z="explorador">
+            <div class="vs-tit">Explorador</div>
+            <ul>
+              <li>VR Concept</li>
+              <li class="sub">.claude/skills</li>
+              <li class="sub">comercial</li>
+              <li class="sub">estrategia</li>
+              <li class="sub ativo">CLAUDE.md</li>
+              <li class="sub">ata-reuniao.md</li>
+              <li class="sub">leads-outubro.csv</li>
+            </ul>
+          </div>
+          <div class="vs-zona vs-editor" data-z="editor">
+            <div class="vs-aba">CLAUDE.md</div>
+<pre># VR Concept · instruções fixas
+
+Quem somos: escola odontológica e a
+clínica Odontonova (Bocaiuva, MG).
+Tom: direto e acolhedor.
+<del>Nunca: citar preço.</del><ins>Nunca: citar preço sem confirmar com a equipe.</ins></pre>
+          </div>
+          <div class="vs-zona vs-terminal" data-z="terminal"><div class="vs-tit">Terminal</div>$</div>
+          <div class="vs-zona vs-claude" data-z="claude">
+            <div class="vs-tit">Claude Code</div>
+            <div class="vs-msg eu">Ajusta a regra de preço no CLAUDE.md</div>
+            <div class="vs-msg ele">Mudei uma linha no CLAUDE.md. Quer aceitar a mudança?</div>
+            <div class="vs-botoes"><span class="ok">Aceitar</span><span>Recusar</span></div>
+            <div class="vs-campo"><b>@CLAUDE.md</b> Pergunte ao Claude...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="vs-explica" id="vs-explica" aria-live="polite"></p>
+
+    <div class="duas" style="margin-top:40px">
+      <div class="pilha">
+        <div class="rot">Como instalar</div>
+        <ol class="passinhos">
+          <li><span>Baixe o VS Code em <b>code.visualstudio.com</b> e instale. É grátis.</span></li>
+          <li><span>Na barra da esquerda, abra <b>Extensões</b> (Cmd+Shift+X), busque <b>Claude Code</b> e instale a da Anthropic.</span></li>
+          <li><span>Para ver o programa em português, instale também a extensão <b>Portuguese (Brazil) Language Pack</b>.</span></li>
+          <li><span>Em <b>File &gt; Open Folder</b> (Arquivo &gt; Abrir Pasta), abra a pasta da VR.</span></li>
+          <li><span>Abra o Claude Code pelo <b>ícone do Claude</b>, no topo à direita, e entre com a sua conta do Claude (precisa ser plano pago).</span></li>
+          <li><span>Escreva o pedido, como no chat.</span></li>
+        </ol>
+      </div>
+      <div class="pilha">
+        <div class="rot">Como usar no dia a dia</div>
+        <ul class="lista ok">
+          <li>Digite <b style="color:var(--neve)">@</b> e o nome de um arquivo para colocar ele na mesa do Claude.</li>
+          <li>Comece no modo que pede licença antes de mudar arquivo. Cada mudança aparece em vermelho (o antes) e verde (o depois), e você aceita ou recusa.</li>
+          <li>Em tarefa grande, peça o plano primeiro: "Antes de mexer, me mostra o que você vai fazer."</li>
+          <li>Arquivo .md é texto simples, o formato que o Claude lê melhor. Cmd+Shift+V mostra ele formatado.</li>
+          <li>Uma conversa por assunto: conversa nova é mesa limpa.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grade tres" style="margin-top:32px">
+      <div class="card"><span class="rot">A pasta da VR</span><h3>A empresa num lugar só</h3><p>Documentos, planilhas, materiais de curso: tudo numa pasta que o Claude enxerga inteira. É assim que a Altta funciona, com a empresa inteira numa pasta.</p></div>
+      <div class="card"><span class="rot">CLAUDE.md e skills</span><h3>O manual vira arquivo</h3><p>O CLAUDE.md na raiz da pasta é o manual, igual às instruções do Projeto. As skills ficam na pasta .claude/skills, e o Claude usa sozinho.</p></div>
+      <div class="card"><span class="rot">O que sai dali</span><h3>Páginas, relatórios e atas</h3><p>O Claude cria o arquivo direto na pasta. Esta apresentação foi feita assim: no VS Code, com o Claude Code.</p></div>
+    </div>
+
+    <div class="dica" style="background:var(--grafite-2);border-color:var(--grafite-3)">
+      <span class="rot">O primeiro exercício no VS Code</span>
+      <p style="color:var(--neve)">Abra a pasta da VR e peça: <code style="color:var(--neve)">Lê esta pasta inteira e me explica, em 10 linhas, o que tem em cada parte e o que está faltando.</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. CUIDADOS -->
+<section class="faixa escura" id="cuidados" data-nome="Cuidados">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 11 · Os cuidados</div>
+      <h2>O Claude é o auxiliar. A responsável continua sendo você.</h2>
+    </div>
+    <div class="grade tres">
+      <div class="card cuidado"><span class="rot">Alucinação</span><h3 style="color:var(--neve)">Ele pode inventar com confiança.</h3><p>Quando não sabe, pode criar um dado, um estudo, um número. Peça para dizer de onde tirou: na pesquisa e no Research, o Claude mostra as fontes. Confira número, nome e informação clínica.</p></div>
+      <div class="card cuidado"><span class="rot">LGPD</span><h3 style="color:var(--neve)">Dado de paciente é sagrado.</h3><p>Nada de nome, CPF, foto ou prontuário identificado. Troque por "paciente A, 42 anos": o Claude trabalha igual.</p></div>
+      <div class="card cuidado"><span class="rot">A conta</span><h3 style="color:var(--neve)">Trabalho na conta da empresa.</h3><p>No plano Team, as conversas não são usadas para treinar o modelo. Na conta pessoal, confira essa opção nas configurações de privacidade.</p></div>
+      <div class="card cuidado"><span class="rot">Permissões</span><h3 style="color:var(--neve)">Leia antes de aprovar.</h3><p>No Cowork e no Chrome, o Claude pede licença antes de agir. Comece dando acesso só para ler, e libere o resto aos poucos.</p></div>
+      <div class="card cuidado"><span class="rot">Revisão</span><h3 style="color:var(--neve)">Tudo que vai para fora passa por uma pessoa.</h3><p>Mensagem para paciente, material de aluno, post. O Claude prepara; alguém da equipe revisa antes de sair.</p></div>
+      <div class="card cuidado"><span class="rot">Concordância</span><h3 style="color:var(--neve)">Ele concorda demais.</h3><p>A tendência é achar sua ideia ótima. Peça o contrário: "Aponte os pontos fracos disto, sem suavizar."</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. NA PRÁTICA -->
+<section class="faixa" id="vr" data-nome="Na prática">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 12 · Na prática</div>
+      <h2>Onde o Claude entra na VR Concept.</h2>
+      <p class="lead">Cinco áreas, os usos mais rápidos de cada uma, um pedido pronto para copiar e testar hoje mesmo, e onde fazer isso no Claude.</p>
+    </div>
+
+    <div class="abas" role="tablist" aria-label="Áreas da VR">
+      <button class="aba" role="tab" aria-selected="true" aria-controls="p-gestao" id="a-gestao">Gestão</button>
+      <button class="aba" role="tab" aria-selected="false" aria-controls="p-comercial" id="a-comercial">Comercial</button>
+      <button class="aba" role="tab" aria-selected="false" aria-controls="p-conteudo" id="a-conteudo">Conteúdo</button>
+      <button class="aba" role="tab" aria-selected="false" aria-controls="p-escola" id="a-escola">Escola e consultoria</button>
+      <button class="aba" role="tab" aria-selected="false" aria-controls="p-paciente" id="a-paciente">Paciente</button>
+    </div>
+
+    <div class="painel" role="tabpanel" id="p-gestao" aria-labelledby="a-gestao">
+      <ul class="lista ok">
+        <li>Ler o fechamento do mês e apontar o que mudou, e por quê</li>
+        <li>Gravação da reunião vira ata com tarefa, responsável e prazo</li>
+        <li>Um áudio seu explicando um processo vira o POP da clínica</li>
+        <li>Pauta da reunião de equipe a partir das pendências</li>
+      </ul>
+      <div class="copiar-wrap"><div class="topo-copia"><span class="rot">Pedido pronto</span><button class="copiar" type="button">Copiar</button></div>
+<pre class="codigo">Vou colar o fechamento da Odontonova de setembro e de outubro. Compare os dois meses, aponte as 3 maiores mudanças, a causa provável de cada uma e uma ação concreta para cada. Se faltar algum dado, me pergunte antes de concluir.</pre><p class="onde"><b>No Claude:</b> no Projeto VR Concept, com os dois arquivos anexados, no Sonnet. Se forem muitos arquivos numa pasta, no Cowork.</p></div>
+    </div>
+    <div class="painel" role="tabpanel" id="p-comercial" aria-labelledby="a-comercial" hidden>
+      <ul class="lista ok">
+        <li>Roteiro da primeira consulta, do acolhimento ao fechamento</li>
+        <li>Respostas para as objeções: preço, medo, "vou pensar"</li>
+        <li>Follow-up do orçamento que não fechou</li>
+        <li>A IA do WhatsApp atendendo o lead a qualquer hora</li>
+      </ul>
+      <div class="copiar-wrap"><div class="topo-copia"><span class="rot">Pedido pronto</span><button class="copiar" type="button">Copiar</button></div>
+<pre class="codigo">Você é especialista em vendas de tratamento odontológico estético. Liste as 8 objeções mais comuns de quem recebe orçamento de lentes de contato dental e escreva uma resposta curta e honesta para cada uma, em tom direto e acolhedor. Nada de pressão nem promessa de resultado.</pre><p class="onde"><b>No Claude:</b> no Projeto VR Concept. Quando as respostas estiverem boas, elas viram uma skill.</p></div>
+    </div>
+    <div class="painel" role="tabpanel" id="p-conteudo" aria-labelledby="a-conteudo" hidden>
+      <ul class="lista ok">
+        <li>Uma aula ou um caso, sem identificar paciente, vira carrossel, legenda e roteiro de reels</li>
+        <li>Dez ganchos diferentes para o mesmo tema</li>
+        <li>O calendário do mês a partir dos temas que mais vendem</li>
+      </ul>
+      <div class="copiar-wrap"><div class="topo-copia"><span class="rot">Pedido pronto</span><button class="copiar" type="button">Copiar</button></div>
+<pre class="codigo">Abaixo está a transcrição de uma aula do Dr. Vinícius sobre polimento. Transforme em um carrossel de 7 lâminas para dentistas: gancho forte na primeira, uma ideia por lâmina, e chamada para o Guia de Polimento na última. Me entregue o texto de cada lâmina e a legenda.</pre><p class="onde"><b>No Claude:</b> no Projeto VR Concept, pedindo o carrossel como artifact para ver as lâminas montadas.</p></div>
+    </div>
+    <div class="painel" role="tabpanel" id="p-escola" aria-labelledby="a-escola" hidden>
+      <ul class="lista ok">
+        <li>Estruturar um módulo: objetivos, aulas, exercício, checklist</li>
+        <li>Aula gravada vira material de apoio organizado</li>
+        <li>O diagnóstico de entrada do aluno</li>
+        <li>Respostas para as dúvidas que todo aluno repete</li>
+      </ul>
+      <div class="copiar-wrap"><div class="topo-copia"><span class="rot">Pedido pronto</span><button class="copiar" type="button">Copiar</button></div>
+<pre class="codigo">Quero montar o módulo "Agenda que não fura" da consultoria de gestão para dentistas. Proponha 5 aulas de até 15 minutos, cada uma com objetivo, exercício prático e o erro mais comum. Antes de propor, me faça as perguntas que precisar sobre o meu método.</pre><p class="onde"><b>No Claude:</b> no Opus, com o pensamento estendido ligado, dentro do Projeto VR Concept.</p></div>
+    </div>
+    <div class="painel" role="tabpanel" id="p-paciente" aria-labelledby="a-paciente" hidden>
+      <ul class="lista ok">
+        <li>Orientação pós-procedimento em linguagem simples</li>
+        <li>Lembrete e confirmação de consulta</li>
+        <li>Resposta para avaliação no Google</li>
+      </ul>
+      <div class="copiar-wrap"><div class="topo-copia"><span class="rot">Pedido pronto</span><button class="copiar" type="button">Copiar</button></div>
+<pre class="codigo">Escreva a orientação pós-clareamento para enviar pelo WhatsApp: linguagem simples, até 8 linhas, o que pode e o que não pode nas primeiras 48 horas. Eu vou revisar antes de enviar, então marque qualquer ponto em que você não tenha certeza.</pre><p class="onde"><b>No Claude:</b> no Projeto VR Concept e, quando ela existir, com a skill de tom da VR.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. O PLANO -->
+<section class="faixa escura" id="plano" data-nome="O plano">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">No Claude · 13 · O plano</div>
+      <h2>Do chat ao time de IA, em cinco passos no Claude.</h2>
+      <p class="lead">Cada passo sobe um degrau da escada do começo. Um de cada vez, na ordem.</p>
+    </div>
+    <ol class="passos">
+      <li><span class="num">1</span><div><h3>Criar a conta e instalar o app</h3><p>O Claude no plano Pro para começar, ou Team se a equipe for usar junto. O app no computador e no celular, com a conta da empresa, nunca a pessoal.</p></div></li>
+      <li><span class="num">2</span><div><h3>Criar o Projeto VR Concept</h3><p>As instruções fixas (quem é a VR, o público, o tom e os nãos) e os documentos base no conhecimento do projeto: o Método VR, os cursos, as perguntas frequentes.</p></div></li>
+      <li><span class="num">3</span><div><h3>Ligar os conectores</h3><p>Google Drive, Gmail e Agenda primeiro. Depois, o conector do OS da VR, para o Claude trabalhar com os números de verdade e não com o que alguém lembrou de colar.</p></div></li>
+      <li><span class="num">4</span><div><h3>Criar as primeiras skills</h3><p>As dez tarefas que mais se repetem viram dez skills, começando pela que mais toma tempo. O próprio Claude ajuda a escrever cada uma.</p></div></li>
+      <li><span class="num">5</span><div><h3>Passar para o Cowork, o VS Code e os agentes</h3><p>Tarefas inteiras nos arquivos do computador, a pasta da VR aberta no VS Code com o Claude Code, e depois as que rodam sozinhas, todo dia. Sempre com uma pessoa revisando o que sai para fora.</p></div></li>
+    </ol>
+    <div class="tarefa">
+      <span class="rot">A tarefa de hoje</span>
+      <h3>Anote as 10 tarefas que você mais repete na semana.</h3>
+      <p>Para cada uma: quanto tempo leva e quem faz. Essa lista é a matéria-prima das primeiras skills da VR, e é por ela que a gente começa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13. GLOSSÁRIO -->
+<section class="faixa" id="glossario" data-nome="Glossário">
+  <div class="wrap">
+    <div class="cab">
+      <div class="kicker">Para consultar depois</div>
+      <h2>Glossário de bolso.</h2>
+    </div>
+    <label class="rot" for="g-busca" style="display:block;margin-bottom:8px">Buscar um termo</label>
+    <input class="busca" id="g-busca" type="search" placeholder="Ex.: contexto, skill, token" autocomplete="off">
+    <div class="termos" id="termos">
+      <div class="termo"><b>Modelo (LLM)</b><p>O cérebro. O programa treinado com texto que gera as respostas. No Claude: Opus, Sonnet e Haiku.</p></div>
+      <div class="termo"><b>Prompt</b><p>O pedido que você escreve para a IA.</p></div>
+      <div class="termo"><b>Contexto</b><p>Tudo o que a IA está vendo no momento de responder.</p></div>
+      <div class="termo"><b>Janela de contexto</b><p>O tamanho da mesa: o máximo que cabe de uma vez.</p></div>
+      <div class="termo"><b>Token</b><p>O pedaço de palavra que a IA lê. A unidade de tamanho e de custo.</p></div>
+      <div class="termo"><b>Alucinação</b><p>Quando a IA inventa algo e apresenta com confiança.</p></div>
+      <div class="termo"><b>Harness</b><p>O sistema em volta do modelo: instruções, memória, ferramentas, permissões, o ciclo de trabalho.</p></div>
+      <div class="termo"><b>Ferramenta</b><p>Uma ação que a IA pode fazer: pesquisar, ler, enviar, agendar.</p></div>
+      <div class="termo"><b>MCP e conector</b><p>A tomada padrão que liga o Claude aos seus sistemas. No Claude, aparece como Conectores.</p></div>
+      <div class="termo"><b>Skill</b><p>O protocolo de uma tarefa, que a IA abre quando a tarefa aparece.</p></div>
+      <div class="termo"><b>Instruções fixas</b><p>O manual que vale para toda conversa de um projeto.</p></div>
+      <div class="termo"><b>Memória</b><p>O que a IA guarda de uma conversa para a outra.</p></div>
+      <div class="termo"><b>Agente</b><p>A IA trabalhando em ciclo até cumprir um objetivo.</p></div>
+      <div class="termo"><b>Subagente</b><p>Um agente que recebe uma parte do trabalho de outro agente.</p></div>
+      <div class="termo"><b>Engenharia de contexto</b><p>Escolher o que entra na mesa da IA. A habilidade que mais muda o resultado.</p></div>
+      <div class="termo"><b>Opus, Sonnet e Haiku</b><p>Os três modelos do Claude: o que pensa mais, o do dia a dia e o mais rápido.</p></div>
+      <div class="termo"><b>Pensamento estendido</b><p>O botão que faz o Claude raciocinar passo a passo antes de responder.</p></div>
+      <div class="termo"><b>Projeto</b><p>O lugar no Claude com as instruções fixas e os documentos de um assunto.</p></div>
+      <div class="termo"><b>Research</b><p>A pesquisa profunda do Claude, que entrega um relatório com as fontes.</p></div>
+      <div class="termo"><b>Artifact</b><p>Página ou ferramenta interativa que o Claude cria e você abre por link.</p></div>
+      <div class="termo"><b>Cowork</b><p>O Claude trabalhando sozinho nos arquivos do seu computador.</p></div>
+      <div class="termo"><b>Claude Code</b><p>O Claude que constrói sistemas. O harness mais completo.</p></div>
+      <div class="termo"><b>Claude in Chrome</b><p>O Claude navegando e preenchendo no seu navegador.</p></div>
+      <div class="termo"><b>VS Code</b><p>O programa grátis que abre uma pasta inteira. É onde o Claude Code trabalha.</p></div>
+      <div class="termo"><b>CLAUDE.md</b><p>O manual da pasta, em arquivo. O Claude Code lê antes de qualquer trabalho.</p></div>
+      <div class="termo"><b>Markdown (.md)</b><p>Texto simples com títulos e listas. O formato que o Claude lê e escreve melhor.</p></div>
+    </div>
+    <p class="suave" id="g-vazio" hidden style="margin-top:16px">Nenhum termo com esse nome.</p>
+  </div>
+</section>
+
+<!-- FIM -->
+<section class="faixa noite fim" id="fim" data-nome="Fechamento">
+  <div class="wrap">
+    <div class="pilha">
+      <div class="kicker">Para fechar</div>
+      <h2>O Claude não substitui a Dra. Gabriela. Ele <em class="ouro">multiplica</em> o que a Dra. Gabriela já sabe fazer.</h2>
+      <p class="lead">O conhecimento, o método e o critério são seus. O Claude dá escala a eles: mais tarefas feitas, no padrão da VR, com você no papel de quem decide.</p>
+      <div class="acoes" style="margin-top:12px">
+        <a class="btn" href="#plano">Rever o plano</a>
+        <a class="btn sec" href="#inicio">Voltar ao início</a>
+      </div>
+    </div>
+    <div class="rodape"><span>VR Concept · Consultoria de IA</span><span>23 de outubro de 2026</span></div>
+  </div>
+</section>
+
+</main>
+
+<div class="controle" aria-label="Navegar pela apresentação">
+  <button type="button" id="ctl-ant" aria-label="Seção anterior">‹</button>
+  <span id="ctl-pos">1 / 14</span>
+  <button type="button" id="ctl-prox" aria-label="Próxima seção">›</button>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const reduz=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Navegação de apresentação: setas do teclado e o controle no canto
+  const secs=$$('main > section');
+  let atual=0;
+  function medir(){
+    const linha=innerHeight*0.35; let i=0;
+    secs.forEach((s,k)=>{ if(s.getBoundingClientRect().top<=linha) i=k; });
+    atual=i;
+    $('#ctl-pos').textContent=(i+1)+' / '+secs.length+' · '+(secs[i].dataset.nome||'');
+  }
+  function ir(i){ i=Math.max(0,Math.min(secs.length-1,i)); secs[i].scrollIntoView({behavior:reduz?'auto':'smooth',block:'start'}); }
+  addEventListener('scroll',medir,{passive:true}); addEventListener('resize',medir); medir();
+  $('#ctl-ant').onclick=()=>ir(atual-1);
+  $('#ctl-prox').onclick=()=>ir(atual+1);
+  addEventListener('keydown',e=>{
+    const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
+    if(e.key==='ArrowRight'){e.preventDefault();ir(atual+1)}
+    if(e.key==='ArrowLeft'){e.preventDefault();ir(atual-1)}
+  });
+
+  // Abas genéricas (escada e áreas)
+  function abas(seletor){
+    const bts=$$(seletor);
+    bts.forEach(b=>b.addEventListener('click',()=>{
+      bts.forEach(o=>{o.setAttribute('aria-selected',o===b?'true':'false'); const p=document.getElementById(o.getAttribute('aria-controls')); if(p) p.hidden=(o!==b);});
+    }));
+  }
+  abas('.degrau'); abas('.aba');
+
+  // Tokens
+  const ta=$('#tk-in');
+  function contar(){ const t=ta.value; const p=(t.trim().match(/\S+/g)||[]).length; $('#tk-p').textContent=p; $('#tk-n').textContent=t.trim()?Math.max(1,Math.round(t.length/3.6)):0; }
+  ta.addEventListener('input',contar); contar();
+
+  // Montador de prompt
+  const textos={
+    papel:'Você é especialista em atendimento de clínica odontológica de alto padrão.',
+    contexto:'A paciente faltou ontem à avaliação de lentes de contato, sem avisar. É a segunda vez que ela agenda. A clínica é a Odontonova, em Bocaiuva (MG).',
+    tarefa:'Escreva uma mensagem de WhatsApp para remarcar a avaliação.',
+    formato:'Até 4 linhas, tom acolhedor, sem emoji, terminando com duas opções de horário.',
+    limites:'Não fale de preço. Não culpe a paciente. Siga o jeito desta mensagem que já funcionou: "Oi, Ana! Sentimos sua falta ontem..."'
+  };
+  const nomes={papel:'papel',contexto:'contexto',formato:'formato',limites:'exemplo e limites'};
+  const ordem=['papel','contexto','tarefa','formato','limites'];
+  const pecas=$$('.peca');
+  function montar(){
+    const on=pecas.filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.dataset.k);
+    $('#pc-prompt').textContent=ordem.filter(k=>on.includes(k)).map(k=>textos[k]).join('\n\n');
+    const n=on.length; $('#pc-n').textContent=n+' de 5 peças';
+    let r;
+    if(n<=2) r='Olá! Notamos que você não compareceu à sua consulta. Gostaríamos de remarcar. Entre em contato conosco. Atenciosamente, Equipe.';
+    else if(n<=4) r='Oi! Vimos que você não conseguiu vir à avaliação ontem. Queremos muito te atender. Podemos remarcar? Me diga um horário bom para você.';
+    else r='Oi, Ana! Sentimos sua falta ontem na avaliação. Imagino que a semana tenha apertado. Vamos remarcar? Tenho quinta às 10h ou sexta às 15h30, qual fica melhor?';
+    $('#pc-resp').textContent=r;
+    const falta=ordem.filter(k=>k!=='tarefa'&&!on.includes(k)).map(k=>nomes[k]);
+    $('#pc-falta').textContent=falta.length?('Falta: '+falta.join(', ')+'. Sem isso, ela chuta.'):'Com as cinco peças, a resposta sai pronta para enviar.';
+  }
+  pecas.forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.k==='tarefa') return; b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true'); montar(); }));
+  $('#pc-tudo').addEventListener('click',()=>{ pecas.forEach(b=>b.setAttribute('aria-pressed','true')); montar(); });
+  montar();
+
+  // A mesa (janela de contexto)
+  const conversa=[
+    ['voce','Sou a Gabriela, da VR Concept.',1],
+    ['ia','Oi, Gabriela! Como posso ajudar?'],
+    ['voce','Nosso público são dentistas que querem crescer.',1],
+    ['ia','Entendi: dentistas em crescimento.'],
+    ['voce','O tom é direto e acolhedor, sem exagero.',1],
+    ['ia','Anotado: direto e acolhedor.'],
+    ['voce','Me dá ideias de post sobre agenda.'],
+    ['ia','Aqui vão cinco ideias sobre agenda...'],
+    ['voce','Agora ideias sobre faltas de paciente.'],
+    ['ia','Mais cinco ideias sobre faltas...'],
+    ['voce','Escreve o post da ideia 2.'],
+    ['ia','"Olá, pessoal! Hoje vamos falar sobre um tema muito importante..." (genérico e sem o tom da VR)']
+  ];
+  const CAP=6; let mostradas=4;
+  function bolha(m){ const d=document.createElement('div'); d.className='msg '+m[0]+(m[2]?' chave':''); const s=document.createElement('small'); s.textContent=m[0]==='voce'?'Você':'IA'; d.append(s,document.createTextNode(m[1])); return d; }
+  function mesa(){
+    const vis=conversa.slice(0,mostradas), caiu=vis.slice(0,Math.max(0,vis.length-CAP)), cima=vis.slice(-CAP);
+    $('#mesa').replaceChildren(...cima.map(bolha));
+    if(caiu.length) $('#chao').replaceChildren(...caiu.map(bolha));
+    else { const v=document.createElement('p'); v.className='vazio'; v.textContent='Nada por enquanto. Mande mais mensagens.'; $('#chao').replaceChildren(v); }
+    const perdidas=caiu.filter(m=>m[2]).length, al=$('#mesa-alerta');
+    if(perdidas){ al.hidden=false; al.textContent=perdidas===3?'Caíram da mesa quem você é, o público e o tom. Por isso a última resposta saiu genérica. A saída: conversa nova, com as instruções fixas do projeto.':'Já caiu da mesa parte do que você explicou no começo. Ela não vê mais essa informação.'; }
+    else al.hidden=true;
+    $('#mesa-mais').disabled=mostradas>=conversa.length;
+    $('#mesa-mais').style.opacity=mostradas>=conversa.length?.5:1;
+  }
+  $('#mesa-mais').addEventListener('click',()=>{ mostradas=Math.min(conversa.length,mostradas+2); mesa(); });
+  $('#mesa-nova').addEventListener('click',()=>{ mostradas=2; mesa(); });
+  mesa();
+
+  // Copiar pedido pronto
+  $$('.copiar').forEach(b=>b.addEventListener('click',()=>{
+    const pre=b.closest('.copiar-wrap').querySelector('pre'); const txt=pre.textContent;
+    const ok=()=>{ b.textContent='Copiado'; setTimeout(()=>b.textContent='Copiar',1600); };
+    const sel=()=>{ const r=document.createRange(); r.selectNodeContents(pre); const s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent='Selecionado, use Cmd+C'; setTimeout(()=>b.textContent='Copiar',2200); };
+    try{ navigator.clipboard.writeText(txt).then(ok,sel); }catch(e){ sel(); }
+  }));
+
+  // A tela do VS Code: cada botão acende uma parte
+  const vsTextos={
+    explorador:'<b>1. Explorador.</b> As pastas e os arquivos da VR, como no Finder. Clique num arquivo para abrir no meio da tela.',
+    editor:'<b>2. Editor.</b> O arquivo aberto. Quando o Claude muda alguma coisa, aparece o antes em vermelho e o depois em verde, e você aceita ou recusa.',
+    claude:'<b>3. Claude Code.</b> A conversa, igual ao chat, só que ele enxerga a pasta inteira. Digite @ e o nome de um arquivo para colocar ele na mesa.',
+    terminal:'<b>4. Terminal.</b> A tela de comandos. Você não precisa dele: o Claude usa sozinho quando precisa, e pede licença antes.'
+  };
+  const vs=$('#vs'), vsLegs=$$('.vs-leg');
+  function vsFoco(z){
+    vs.classList.add('foco');
+    $$('.vs-zona').forEach(e=>e.classList.toggle('ativa',e.dataset.z===z));
+    vsLegs.forEach(b=>b.setAttribute('aria-pressed',b.dataset.z===z?'true':'false'));
+    $('#vs-explica').innerHTML=vsTextos[z];
+  }
+  vsLegs.forEach(b=>b.addEventListener('click',()=>vsFoco(b.dataset.z)));
+  vsFoco('claude');
+
+  // Glossário
+  const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  $('#g-busca').addEventListener('input',e=>{
+    const q=norm(e.target.value.trim()); let n=0;
+    $$('.termo').forEach(t=>{ const v=!q||norm(t.textContent).includes(q); t.hidden=!v; if(v) n++; });
+    $('#g-vazio').hidden=n>0;
+  });
+})();
+</script>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Molde do post</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+/* O molde das peças de uma lâmina só, no padrão de capa de revista (as referências do G4, da V4 e da
+   Vinci, escolhidas pelo João em 2026-10-04). A imagem é de IA (conteudo-carrossel/imagem.mjs) e ocupa
+   a peça inteira. Três formatos, copie só a <section> que vai usar:
+   .frase-foto  F1, o post de frase: 1080x1350, a imagem de conceito em cima e a frase embaixo
+   .reel-foto   a capa do reel: 1080x1920, uma pessoa anônima no centro, a linha curta, a palavra gigante e a pílula, tudo entre 240 e 1680 (a grade corta em 3:4)
+   .destaque    a capa do destaque: 1080x1920, floresta, um sinal no centro (o Instagram corta em círculo) */
+:root{--floresta:#10241C;--pinho:#1C4034;--perg:#EDE6D8;--ouro:#C9A227;--ouro-claro:#D9BC6A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050b08;display:flex;flex-direction:column;gap:40px;align-items:center;padding:40px;font-family:Inter,sans-serif}
+.s{position:relative;width:1080px;height:1350px;overflow:hidden;color:var(--perg);background:#0b1c15}
+.s > *{position:absolute;z-index:1}
+.caps{font-family:Inter,sans-serif;font-weight:500;letter-spacing:.42em;text-transform:uppercase;font-size:26px}
+.it{font-family:Fraunces,serif;font-style:italic;font-weight:300}
+.ouro{color:var(--ouro-claro)}
+.foto{inset:0;background-size:cover;background-position:center}
+.selo{left:0;right:0;top:56px;display:flex;justify-content:center;align-items:center;gap:16px;font-size:20px;letter-spacing:.5em;opacity:.9}
+.selo svg{width:46px;height:28px}
+
+/* F1: a imagem de conceito e a frase em duas metades embaixo, centralizada */
+.frase-foto .veu{inset:0;background:linear-gradient(0deg,#0b1c15 0%,#0b1c15f0 26%,#0b1c1599 44%,#0b1c1500 62%),linear-gradient(180deg,#0b1c15b3 0%,#0b1c1500 16%)}
+.frase-foto .bloco{left:80px;right:80px;bottom:110px;text-align:center}
+.frase-foto .frase{font-family:Fraunces,serif;font-weight:400;font-size:90px;line-height:1.02;letter-spacing:-.02em;color:#F3EEE3}
+.frase-foto .frase .it{display:block;font-weight:300;margin-top:12px}
+
+/* capa do reel: o rosto em cima, o título embaixo, dentro do recorte da grade */
+.reel-foto{height:1920px}
+/* 🔁 2026-10-04: o esquema da V4 com a nossa sofisticação (a pessoa no centro, a palavra gigante em Fraunces, a pílula em ouro) */
+.reel-foto .foto{background-position:center top}
+.reel-foto .veu{inset:0;background:linear-gradient(0deg,#0b1c15 0%,#0b1c15 16%,#0b1c15ee 28%,#0b1c1599 40%,#0b1c1500 56%),linear-gradient(180deg,#0b1c1599 0%,#0b1c1500 14%)}
+.reel-foto .selo{top:140px}
+.reel-foto .bloco{left:50px;right:50px;bottom:250px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.reel-foto .chapeu{font-family:Inter,sans-serif;font-weight:600;font-size:46px;letter-spacing:-.01em;color:#F3EEE3;text-shadow:0 4px 24px #0b1c15}
+.reel-foto h1{white-space:nowrap;max-width:100%;font-family:Fraunces,serif;font-weight:400;font-size:176px;line-height:.86;letter-spacing:-.035em;text-transform:uppercase;color:#F3EEE3;margin-top:10px;text-shadow:0 10px 50px #0b1c15cc}
+.reel-foto .pilula{margin-top:30px;background:var(--ouro);color:var(--floresta);font-family:Inter,sans-serif;font-weight:600;font-size:42px;line-height:1;padding:16px 32px 18px;border-radius:14px}
+
+/* capa do destaque: um sinal no centro, o nome fica embaixo do círculo no próprio Instagram */
+.destaque{height:1920px;background:radial-gradient(900px 900px at 70% 30%,#1f4a3a55,transparent 70%),radial-gradient(1100px 1100px at 15% 90%,#0a1a1399,transparent 70%),linear-gradient(160deg,#153227 0%,#0f261d 45%,#0b1c15 100%)}
+.destaque .sinal{left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center}
+.destaque .sinal svg{width:420px;height:300px}
+</style>
+</head>
+<body>
+<svg style="display:none">
+  <symbol id="montes" viewBox="14 36 92 54"><path d="M16 88 L38 54 L54 70 L70 38 L104 88 Z" fill="#EDE6D8"/><path d="M70 38 L65 88 L58 88 Z" fill="#0f261d"/></symbol>
+  <symbol id="aspas" viewBox="0 0 200 140"><g fill="#D9BC6A"><circle cx="45" cy="100" r="38"/><path d="M8 96 C8 46 36 14 82 4 L87 17 C58 28 46 50 46 74 Z"/><circle cx="145" cy="100" r="38"/><path d="M108 96 C108 46 136 14 182 4 L187 17 C158 28 146 50 146 74 Z"/></g></symbol>
+</svg>
+
+<!-- F1: a frase em duas metades, "Ou você [X], ou [Y]." -->
+<section class="s frase-foto">
+  <div class="foto" style="background-image:url(fotos/[imagem].jpg)"></div>
+  <div class="veu"></div>
+  <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+  <div class="bloco">
+    <p class="frase">Ou você [primeira<br>metade],<span class="it ouro">ou [segunda<br>metade].</span></p>
+  </div>
+</section>
+
+<!-- capa do reel -->
+<section class="s reel-foto">
+  <div class="foto" style="background-image:url(fotos/[imagem].jpg)"></div>
+  <div class="veu"></div>
+  <div class="selo caps"><svg><use href="#montes"/></svg>Altta</div>
+  <div class="bloco">
+    <p class="chapeu">[A linha curta de cima]</p>
+    <h1>[Palavra<br>gigante]</h1>
+    <p class="pilula">[O resto da frase]</p>
+  </div>
+</section>
+
+<!-- capa do destaque: um sinal em svg (#aspas para Cases, #montes para A Altta) -->
+<section class="s destaque">
+  <div class="sinal"><svg><use href="#aspas"/></svg></div>
+</section>
+<script>
+// A palavra gigante só quebra onde tem <br>; se uma linha não couber, a letra diminui até caber.
+document.fonts.ready.then(() => document.querySelectorAll(".capa h1, .reel-foto h1").forEach((h) => {
+  let t = parseFloat(getComputedStyle(h).fontSize);
+  while (h.scrollWidth > h.clientWidth + 1 && t > 60) h.style.fontSize = (t -= 4) + "px";
+}));
+</script>
+</body>
+</html>
